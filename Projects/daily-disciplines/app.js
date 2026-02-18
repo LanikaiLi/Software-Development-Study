@@ -7,17 +7,19 @@
 
   // ── Storage Layer ──────────────────────────
 
-  const STORAGE_KEYS = {
+  var STORAGE_KEYS = {
     disciplines: 'dd_disciplines',
     records: 'dd_records',
+    rewards: 'dd_rewards',
   };
 
   function loadDisciplines() {
-    const raw = localStorage.getItem(STORAGE_KEYS.disciplines);
+    var raw = localStorage.getItem(STORAGE_KEYS.disciplines);
     if (!raw) return [];
-    const list = JSON.parse(raw);
+    var list = JSON.parse(raw);
     list.forEach(function (d) {
       if (d.active === undefined) d.active = true;
+      if (d.points === undefined) d.points = 5;
     });
     return list;
   }
@@ -27,20 +29,29 @@
   }
 
   function loadRecords() {
-    const raw = localStorage.getItem(STORAGE_KEYS.records);
+    var raw = localStorage.getItem(STORAGE_KEYS.records);
     return raw ? JSON.parse(raw) : {};
   }
 
-  function saveRecords(records) {
-    localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(records));
+  function saveRecords(recs) {
+    localStorage.setItem(STORAGE_KEYS.records, JSON.stringify(recs));
+  }
+
+  function loadRewards() {
+    var raw = localStorage.getItem(STORAGE_KEYS.rewards);
+    return raw ? JSON.parse(raw) : [];
+  }
+
+  function saveRewards(list) {
+    localStorage.setItem(STORAGE_KEYS.rewards, JSON.stringify(list));
   }
 
   function getTodayKey() {
-    const d = new Date();
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
+    var d = new Date();
+    var yyyy = d.getFullYear();
+    var mm = String(d.getMonth() + 1).padStart(2, '0');
+    var dd = String(d.getDate()).padStart(2, '0');
+    return yyyy + '-' + mm + '-' + dd;
   }
 
   function generateId() {
@@ -53,27 +64,47 @@
 
   // ── State ──────────────────────────────────
 
-  let disciplines = loadDisciplines();
-  let records = loadRecords();
-  let currentRange = 7;
+  var disciplines = loadDisciplines();
+  var records = loadRecords();
+  var rewards = loadRewards();
+  var currentRange = 7;
+  var pendingImageData = null;
 
   // ── DOM References ─────────────────────────
 
-  const $todayDate = document.getElementById('todayDate');
-  const $checklist = document.getElementById('checklist');
-  const $addForm = document.getElementById('addForm');
-  const $addInput = document.getElementById('addInput');
-  const $progressDone = document.getElementById('progressDone');
-  const $progressTotal = document.getElementById('progressTotal');
-  const $progressCircle = document.getElementById('progressCircle');
-  const $manageList = document.getElementById('manageList');
+  var $todayDate = document.getElementById('todayDate');
+  var $checklist = document.getElementById('checklist');
+  var $addForm = document.getElementById('addForm');
+  var $addInput = document.getElementById('addInput');
+  var $addPoints = document.getElementById('addPoints');
+  var $progressDone = document.getElementById('progressDone');
+  var $progressTotal = document.getElementById('progressTotal');
+  var $progressCircle = document.getElementById('progressCircle');
+  var $manageList = document.getElementById('manageList');
 
-  const $statStreak = document.getElementById('statStreak');
-  const $statAvg = document.getElementById('statAvg');
-  const $statPerfect = document.getElementById('statPerfect');
-  const $disciplineRates = document.getElementById('disciplineRates');
-  const $ratesEmpty = document.getElementById('ratesEmpty');
-  const $heatmap = document.getElementById('heatmap');
+  var $pointsBalance = document.getElementById('pointsBalance');
+  var $pointsDollars = document.getElementById('pointsDollars');
+  var $pointsEarned = document.getElementById('pointsEarned');
+  var $pointsSpent = document.getElementById('pointsSpent');
+  var $pointsChart = document.getElementById('pointsChart');
+  var $chartEmpty = document.getElementById('chartEmpty');
+  var $rewardForm = document.getElementById('rewardForm');
+  var $rewardPoints = document.getElementById('rewardPoints');
+  var $rewardDesc = document.getElementById('rewardDesc');
+  var $rewardImage = document.getElementById('rewardImage');
+  var $imageUploadArea = document.getElementById('imageUploadArea');
+  var $imagePreviewContainer = document.getElementById('imagePreviewContainer');
+  var $imagePreview = document.getElementById('imagePreview');
+  var $imageRemoveBtn = document.getElementById('imageRemoveBtn');
+  var $rewardsJournal = document.getElementById('rewardsJournal');
+  var $journalEmpty = document.getElementById('journalEmpty');
+
+  var $statStreak = document.getElementById('statStreak');
+  var $statAvg = document.getElementById('statAvg');
+  var $statPerfect = document.getElementById('statPerfect');
+  var $disciplineRates = document.getElementById('disciplineRates');
+  var $ratesEmpty = document.getElementById('ratesEmpty');
+  var $heatmap = document.getElementById('heatmap');
 
   // ── Tab Navigation ─────────────────────────
 
@@ -86,6 +117,7 @@
 
       if (btn.dataset.tab === 'today') renderToday();
       if (btn.dataset.tab === 'manage') renderManage();
+      if (btn.dataset.tab === 'points') renderPoints();
       if (btn.dataset.tab === 'analysis') renderAnalysis();
     });
   });
@@ -104,8 +136,8 @@
   // ── Display Today's Date ───────────────────
 
   function formatDisplayDate(dateKey) {
-    const parts = dateKey.split('-');
-    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    var parts = dateKey.split('-');
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
     return d.toLocaleDateString('en-US', {
       weekday: 'long',
       year: 'numeric',
@@ -119,9 +151,9 @@
   // ── Render Today Tab ───────────────────────
 
   function renderToday() {
-    const today = getTodayKey();
+    var today = getTodayKey();
     if (!records[today]) records[today] = {};
-    const active = getActiveDisciplines();
+    var active = getActiveDisciplines();
 
     $checklist.innerHTML = '';
 
@@ -131,17 +163,16 @@
     }
 
     active.forEach(function (disc) {
-      const isChecked = !!records[today][disc.id];
-
-      const card = document.createElement('div');
+      var isChecked = !!records[today][disc.id];
+      var card = document.createElement('div');
       card.className = 'discipline-card' + (isChecked ? ' checked' : '');
       card.innerHTML =
         '<label class="checkbox">' +
           '<input type="checkbox"' + (isChecked ? ' checked' : '') + ' data-id="' + disc.id + '">' +
           '<div class="checkmark"></div>' +
         '</label>' +
-        '<span class="discipline-name">' + escapeHtml(disc.name) + '</span>';
-
+        '<span class="discipline-name">' + escapeHtml(disc.name) + '</span>' +
+        '<span class="points-badge">★ ' + disc.points + '</span>';
       $checklist.appendChild(card);
     });
 
@@ -149,29 +180,28 @@
   }
 
   function escapeHtml(text) {
-    const div = document.createElement('div');
+    var div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
   }
 
-  // ── Checkbox Toggle (Event Delegation) ─────
+  // ── Checkbox Toggle ────────────────────────
 
   $checklist.addEventListener('change', function (e) {
     if (e.target.type !== 'checkbox') return;
-    const id = e.target.dataset.id;
-    const today = getTodayKey();
+    var id = e.target.dataset.id;
+    var today = getTodayKey();
 
     if (!records[today]) records[today] = {};
     records[today][id] = e.target.checked;
     saveRecords(records);
 
-    const card = e.target.closest('.discipline-card');
+    var card = e.target.closest('.discipline-card');
     if (e.target.checked) {
       card.classList.add('checked');
     } else {
       card.classList.remove('checked');
     }
-
     updateProgress();
   });
 
@@ -187,16 +217,19 @@
     }
 
     disciplines.forEach(function (disc) {
-      const card = document.createElement('div');
+      var card = document.createElement('div');
       card.className = 'manage-card' + (disc.active ? '' : ' inactive');
       card.innerHTML =
         '<label class="toggle">' +
-          '<input type="checkbox"' + (disc.active ? ' checked' : '') + ' data-id="' + disc.id + '">' +
+          '<input type="checkbox"' + (disc.active ? ' checked' : '') + ' data-id="' + disc.id + '" data-action="toggle">' +
           '<div class="toggle-track"></div>' +
         '</label>' +
         '<span class="manage-card-name">' + escapeHtml(disc.name) + '</span>' +
+        '<div class="manage-points">' +
+          '<span class="points-star">★</span>' +
+          '<input type="number" class="manage-points-input" value="' + disc.points + '" min="1" max="50" data-id="' + disc.id + '" data-action="points">' +
+        '</div>' +
         '<button class="manage-delete-btn" data-id="' + disc.id + '" title="Delete permanently">✕</button>';
-
       $manageList.appendChild(card);
     });
   }
@@ -204,30 +237,41 @@
   // ── Manage: Toggle Active ──────────────────
 
   $manageList.addEventListener('change', function (e) {
-    if (e.target.type !== 'checkbox') return;
-    const id = e.target.dataset.id;
-    var disc = disciplines.find(function (d) { return d.id === id; });
-    if (!disc) return;
+    if (e.target.dataset.action === 'toggle') {
+      var id = e.target.dataset.id;
+      var disc = disciplines.find(function (d) { return d.id === id; });
+      if (!disc) return;
+      disc.active = e.target.checked;
+      saveDisciplines(disciplines);
+      var card = e.target.closest('.manage-card');
+      if (disc.active) {
+        card.classList.remove('inactive');
+      } else {
+        card.classList.add('inactive');
+      }
+    }
 
-    disc.active = e.target.checked;
-    saveDisciplines(disciplines);
-
-    const card = e.target.closest('.manage-card');
-    if (disc.active) {
-      card.classList.remove('inactive');
-    } else {
-      card.classList.add('inactive');
+    if (e.target.dataset.action === 'points') {
+      var ptId = e.target.dataset.id;
+      var ptDisc = disciplines.find(function (d) { return d.id === ptId; });
+      if (!ptDisc) return;
+      var val = parseInt(e.target.value) || 1;
+      if (val < 1) val = 1;
+      if (val > 50) val = 50;
+      e.target.value = val;
+      ptDisc.points = val;
+      saveDisciplines(disciplines);
     }
   });
 
   // ── Manage: Delete Discipline ──────────────
 
   $manageList.addEventListener('click', function (e) {
-    const btn = e.target.closest('.manage-delete-btn');
+    var btn = e.target.closest('.manage-delete-btn');
     if (!btn) return;
 
-    const id = btn.dataset.id;
-    const disc = disciplines.find(function (d) { return d.id === id; });
+    var id = btn.dataset.id;
+    var disc = disciplines.find(function (d) { return d.id === id; });
     if (!disc) return;
 
     if (!confirm('Permanently delete "' + disc.name + '"?\nThis will also remove its history.')) return;
@@ -247,31 +291,37 @@
 
   $addForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    const name = $addInput.value.trim();
+    var name = $addInput.value.trim();
     if (!name) return;
+
+    var pts = parseInt($addPoints.value) || 5;
+    if (pts < 1) pts = 1;
+    if (pts > 50) pts = 50;
 
     disciplines.push({
       id: generateId(),
       name: name,
+      points: pts,
       active: true,
       createdAt: getTodayKey(),
     });
     saveDisciplines(disciplines);
     $addInput.value = '';
+    $addPoints.value = 5;
     renderManage();
     $addInput.focus();
   });
 
   // ── Progress Ring ──────────────────────────
 
-  const CIRCUMFERENCE = 2 * Math.PI * 52;
+  var CIRCUMFERENCE = 2 * Math.PI * 52;
 
   function updateProgress() {
-    const today = getTodayKey();
-    const todayRecord = records[today] || {};
-    const active = getActiveDisciplines();
-    const total = active.length;
-    let done = 0;
+    var today = getTodayKey();
+    var todayRecord = records[today] || {};
+    var active = getActiveDisciplines();
+    var total = active.length;
+    var done = 0;
 
     active.forEach(function (d) {
       if (todayRecord[d.id]) done++;
@@ -280,29 +330,337 @@
     $progressDone.textContent = done;
     $progressTotal.textContent = total;
 
-    const pct = total === 0 ? 0 : done / total;
-    const offset = CIRCUMFERENCE * (1 - pct);
+    var pct = total === 0 ? 0 : done / total;
+    var offset = CIRCUMFERENCE * (1 - pct);
     $progressCircle.style.strokeDashoffset = offset;
   }
 
-  // ── Analysis Tab ───────────────────────────
+  // ═══════════════════════════════════════════
+  //  POINTS TAB
+  // ═══════════════════════════════════════════
+
+  var POINTS_PER_DOLLAR = 100;
+
+  function calcTotalEarned() {
+    var total = 0;
+    var discMap = {};
+    disciplines.forEach(function (d) { discMap[d.id] = d.points; });
+
+    Object.keys(records).forEach(function (dateKey) {
+      var dayRecord = records[dateKey];
+      Object.keys(dayRecord).forEach(function (discId) {
+        if (dayRecord[discId] && discMap[discId] !== undefined) {
+          total += discMap[discId];
+        }
+      });
+    });
+    return total;
+  }
+
+  function calcTotalSpent() {
+    var total = 0;
+    rewards.forEach(function (r) { total += r.pointsSpent; });
+    return total;
+  }
+
+  function calcDailyPointsForChart() {
+    var discMap = {};
+    disciplines.forEach(function (d) { discMap[d.id] = d.points; });
+
+    var sortedDates = Object.keys(records).sort();
+    if (sortedDates.length === 0) return [];
+
+    var data = [];
+    var cumulative = 0;
+    sortedDates.forEach(function (dateKey) {
+      var dayRecord = records[dateKey];
+      var dayPts = 0;
+      Object.keys(dayRecord).forEach(function (discId) {
+        if (dayRecord[discId] && discMap[discId] !== undefined) {
+          dayPts += discMap[discId];
+        }
+      });
+      cumulative += dayPts;
+      if (dayPts > 0 || data.length > 0) {
+        data.push({ date: dateKey, cumulative: cumulative, daily: dayPts });
+      }
+    });
+    return data;
+  }
+
+  // ── Render Points Tab ──────────────────────
+
+  function renderPoints() {
+    var earned = calcTotalEarned();
+    var spent = calcTotalSpent();
+    var balance = earned - spent;
+
+    $pointsBalance.textContent = balance;
+    $pointsDollars.textContent = '= $' + (balance / POINTS_PER_DOLLAR).toFixed(2) + ' to treat yourself';
+    $pointsEarned.textContent = earned;
+    $pointsSpent.textContent = spent;
+
+    renderChart();
+    renderJournal();
+  }
+
+  // ── Canvas Line Chart ──────────────────────
+
+  function renderChart() {
+    var data = calcDailyPointsForChart();
+    var ctx = $pointsChart.getContext('2d');
+    var W = $pointsChart.width;
+    var H = $pointsChart.height;
+
+    ctx.clearRect(0, 0, W, H);
+
+    if (data.length === 0) {
+      $chartEmpty.style.display = 'block';
+      return;
+    }
+    $chartEmpty.style.display = 'none';
+
+    var padLeft = 44;
+    var padRight = 16;
+    var padTop = 16;
+    var padBottom = 28;
+    var chartW = W - padLeft - padRight;
+    var chartH = H - padTop - padBottom;
+
+    var maxVal = Math.max.apply(null, data.map(function (d) { return d.cumulative; }));
+    if (maxVal === 0) maxVal = 10;
+    var niceMax = Math.ceil(maxVal / 10) * 10;
+
+    function xPos(i) { return padLeft + (data.length === 1 ? chartW / 2 : (i / (data.length - 1)) * chartW); }
+    function yPos(v) { return padTop + chartH - (v / niceMax) * chartH; }
+
+    // Grid lines
+    ctx.strokeStyle = 'rgba(140,123,107,0.1)';
+    ctx.lineWidth = 1;
+    var gridSteps = 4;
+    for (var g = 0; g <= gridSteps; g++) {
+      var gy = padTop + (g / gridSteps) * chartH;
+      ctx.beginPath();
+      ctx.moveTo(padLeft, gy);
+      ctx.lineTo(W - padRight, gy);
+      ctx.stroke();
+
+      var gridVal = Math.round(niceMax - (g / gridSteps) * niceMax);
+      ctx.fillStyle = '#8C7B6B';
+      ctx.font = '600 10px Nunito, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText(gridVal, padLeft - 8, gy + 3);
+    }
+
+    // Filled area
+    ctx.beginPath();
+    ctx.moveTo(xPos(0), yPos(0));
+    data.forEach(function (d, i) { ctx.lineTo(xPos(i), yPos(d.cumulative)); });
+    ctx.lineTo(xPos(data.length - 1), yPos(0));
+    ctx.closePath();
+
+    var grad = ctx.createLinearGradient(0, padTop, 0, padTop + chartH);
+    grad.addColorStop(0, 'rgba(224,122,95,0.25)');
+    grad.addColorStop(1, 'rgba(224,122,95,0.02)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    data.forEach(function (d, i) {
+      if (i === 0) ctx.moveTo(xPos(i), yPos(d.cumulative));
+      else ctx.lineTo(xPos(i), yPos(d.cumulative));
+    });
+    ctx.strokeStyle = '#E07A5F';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+    ctx.stroke();
+
+    // Dots
+    data.forEach(function (d, i) {
+      ctx.beginPath();
+      ctx.arc(xPos(i), yPos(d.cumulative), 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = '#E07A5F';
+      ctx.fill();
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+
+    // X-axis labels (show a few evenly spaced)
+    ctx.fillStyle = '#8C7B6B';
+    ctx.font = '600 9px Nunito, sans-serif';
+    ctx.textAlign = 'center';
+    var labelCount = Math.min(data.length, 6);
+    for (var li = 0; li < labelCount; li++) {
+      var idx = labelCount === 1 ? 0 : Math.round(li / (labelCount - 1) * (data.length - 1));
+      var lbl = formatShortDate(data[idx].date);
+      ctx.fillText(lbl, xPos(idx), H - 6);
+    }
+  }
+
+  // ── Image Upload ───────────────────────────
+
+  $rewardImage.addEventListener('change', function (e) {
+    var file = e.target.files[0];
+    if (!file) return;
+    resizeImage(file, 400, 0.6, function (dataUrl) {
+      pendingImageData = dataUrl;
+      $imagePreview.src = dataUrl;
+      $imageUploadArea.style.display = 'none';
+      $imagePreviewContainer.style.display = 'block';
+      $rewardImage.style.display = 'none';
+    });
+  });
+
+  $imageRemoveBtn.addEventListener('click', function () {
+    clearImageUpload();
+  });
+
+  function clearImageUpload() {
+    pendingImageData = null;
+    $rewardImage.value = '';
+    $imagePreview.src = '';
+    $imageUploadArea.style.display = 'flex';
+    $imagePreviewContainer.style.display = 'none';
+    $rewardImage.style.display = '';
+  }
+
+  function resizeImage(file, maxWidth, quality, callback) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      var img = new Image();
+      img.onload = function () {
+        var w = img.width;
+        var h = img.height;
+        if (w > maxWidth) {
+          h = Math.round(h * (maxWidth / w));
+          w = maxWidth;
+        }
+        var canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        var ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        callback(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // ── Reward Form Submit ─────────────────────
+
+  $rewardForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    var pts = parseInt($rewardPoints.value);
+    var desc = $rewardDesc.value.trim();
+    if (!pts || pts < 1) {
+      alert('Please enter how many points to spend.');
+      return;
+    }
+    if (!desc) {
+      alert('Please describe your treat!');
+      return;
+    }
+
+    var balance = calcTotalEarned() - calcTotalSpent();
+    if (pts > balance) {
+      alert('You only have ' + balance + ' points available. Keep going — you\'re almost there!');
+      return;
+    }
+
+    rewards.push({
+      id: generateId(),
+      date: getTodayKey(),
+      pointsSpent: pts,
+      description: desc,
+      image: pendingImageData || null,
+    });
+    saveRewards(rewards);
+
+    $rewardPoints.value = '';
+    $rewardDesc.value = '';
+    clearImageUpload();
+
+    renderPoints();
+  });
+
+  // ── Render Journal ─────────────────────────
+
+  function renderJournal() {
+    $rewardsJournal.innerHTML = '';
+
+    if (rewards.length === 0) {
+      $journalEmpty.style.display = 'block';
+      return;
+    }
+    $journalEmpty.style.display = 'none';
+
+    var sorted = rewards.slice().reverse();
+    sorted.forEach(function (reward) {
+      var entry = document.createElement('div');
+      entry.className = 'reward-entry';
+
+      var imageHtml = '';
+      if (reward.image) {
+        imageHtml = '<div class="reward-entry-image"><img src="' + reward.image + '" alt="Memory"></div>';
+      }
+
+      entry.innerHTML =
+        '<div class="reward-entry-icon">🎁</div>' +
+        '<div class="reward-entry-body">' +
+          '<div class="reward-entry-header">' +
+            '<span class="reward-entry-desc">' + escapeHtml(reward.description) + '</span>' +
+            '<span class="reward-entry-pts">-' + reward.pointsSpent + ' ★</span>' +
+          '</div>' +
+          '<span class="reward-entry-date">' + formatDisplayDate(reward.date) + '</span>' +
+          imageHtml +
+        '</div>' +
+        '<div class="reward-entry-actions">' +
+          '<button class="reward-delete-btn" data-id="' + reward.id + '" title="Remove entry">✕</button>' +
+        '</div>';
+
+      $rewardsJournal.appendChild(entry);
+    });
+  }
+
+  // ── Delete Reward Entry ────────────────────
+
+  $rewardsJournal.addEventListener('click', function (e) {
+    var btn = e.target.closest('.reward-delete-btn');
+    if (!btn) return;
+
+    var id = btn.dataset.id;
+    if (!confirm('Remove this journal entry? The points will be refunded.')) return;
+
+    rewards = rewards.filter(function (r) { return r.id !== id; });
+    saveRewards(rewards);
+    renderPoints();
+  });
+
+  // ═══════════════════════════════════════════
+  //  ANALYSIS TAB
+  // ═══════════════════════════════════════════
 
   function getDateRange(range) {
-    const dates = [];
+    var dates = [];
     if (range === 'all') {
-      const allDates = Object.keys(records).sort();
+      var allDates = Object.keys(records).sort();
       if (allDates.length === 0) return [];
-      const start = allDates[0];
-      let current = start;
+      var start = allDates[0];
+      var current = start;
       while (current <= getTodayKey()) {
         dates.push(current);
         current = nextDay(current);
       }
       return dates;
     }
-    const today = new Date();
-    for (let i = range - 1; i >= 0; i--) {
-      const d = new Date(today);
+    var today = new Date();
+    for (var i = range - 1; i >= 0; i--) {
+      var d = new Date(today);
       d.setDate(d.getDate() - i);
       dates.push(formatDateKey(d));
     }
@@ -310,28 +668,26 @@
   }
 
   function formatDateKey(d) {
-    const yyyy = d.getFullYear();
-    const mm = String(d.getMonth() + 1).padStart(2, '0');
-    const dd = String(d.getDate()).padStart(2, '0');
-    return `${yyyy}-${mm}-${dd}`;
+    var yyyy = d.getFullYear();
+    var mm = String(d.getMonth() + 1).padStart(2, '0');
+    var dd = String(d.getDate()).padStart(2, '0');
+    return yyyy + '-' + mm + '-' + dd;
   }
 
   function nextDay(dateKey) {
-    const parts = dateKey.split('-');
-    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    var parts = dateKey.split('-');
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
     d.setDate(d.getDate() + 1);
     return formatDateKey(d);
   }
 
   function renderAnalysis() {
-    const dates = getDateRange(currentRange);
-    const active = getActiveDisciplines();
+    var dates = getDateRange(currentRange);
+    var active = getActiveDisciplines();
     renderStats(dates, active);
     renderDisciplineRates(dates, active);
     renderHeatmap(dates, active);
   }
-
-  // ── Stats Cards ────────────────────────────
 
   function renderStats(dates, active) {
     if (active.length === 0 || dates.length === 0) {
@@ -341,52 +697,46 @@
       return;
     }
 
-    let streak = 0;
-    const today = getTodayKey();
-    let checkDate = today;
+    var streak = 0;
+    var today = getTodayKey();
+    var checkDate = today;
     while (true) {
-      const dayRecord = records[checkDate] || {};
-      const allDone = active.every(function (d) { return !!dayRecord[d.id]; });
+      var dayRecord = records[checkDate] || {};
+      var allDone = active.every(function (d) { return !!dayRecord[d.id]; });
       if (!allDone) break;
       streak++;
       checkDate = prevDay(checkDate);
     }
 
-    let totalPct = 0;
-    let countedDays = 0;
-    let perfectDays = 0;
+    var totalPct = 0;
+    var countedDays = 0;
+    var perfectDays = 0;
 
     dates.forEach(function (dateKey) {
-      const dayRecord = records[dateKey] || {};
-      let done = 0;
-      active.forEach(function (d) {
-        if (dayRecord[d.id]) done++;
-      });
-      const pct = done / active.length;
+      var dayRec = records[dateKey] || {};
+      var done = 0;
+      active.forEach(function (d) { if (dayRec[d.id]) done++; });
+      var pct = done / active.length;
       totalPct += pct;
       countedDays++;
       if (pct === 1) perfectDays++;
     });
 
-    const avg = countedDays > 0 ? Math.round((totalPct / countedDays) * 100) : 0;
-
+    var avg = countedDays > 0 ? Math.round((totalPct / countedDays) * 100) : 0;
     $statStreak.textContent = streak;
     $statAvg.textContent = avg + '%';
     $statPerfect.textContent = perfectDays;
   }
 
   function prevDay(dateKey) {
-    const parts = dateKey.split('-');
-    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    var parts = dateKey.split('-');
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
     d.setDate(d.getDate() - 1);
     return formatDateKey(d);
   }
 
-  // ── Per-Discipline Rates ───────────────────
-
   function renderDisciplineRates(dates, active) {
     $disciplineRates.innerHTML = '';
-
     if (active.length === 0 || dates.length === 0) {
       $ratesEmpty.style.display = 'block';
       return;
@@ -394,14 +744,13 @@
     $ratesEmpty.style.display = 'none';
 
     active.forEach(function (disc) {
-      let done = 0;
+      var done = 0;
       dates.forEach(function (dateKey) {
-        const dayRecord = records[dateKey] || {};
-        if (dayRecord[disc.id]) done++;
+        var dayRec = records[dateKey] || {};
+        if (dayRec[disc.id]) done++;
       });
-      const pct = Math.round((done / dates.length) * 100);
-
-      const row = document.createElement('div');
+      var pct = Math.round((done / dates.length) * 100);
+      var row = document.createElement('div');
       row.className = 'rate-row';
       row.innerHTML =
         '<div class="rate-header">' +
@@ -415,36 +764,30 @@
     });
   }
 
-  // ── Heatmap ────────────────────────────────
-
   function renderHeatmap(dates, active) {
     $heatmap.innerHTML = '';
-
     if (active.length === 0 || dates.length === 0) return;
 
     dates.forEach(function (dateKey) {
-      const dayRecord = records[dateKey] || {};
-      let done = 0;
-      active.forEach(function (d) {
-        if (dayRecord[d.id]) done++;
-      });
-      const pct = done / active.length;
-      const opacity = pct === 0 ? 0.08 : 0.15 + pct * 0.85;
+      var dayRec = records[dateKey] || {};
+      var done = 0;
+      active.forEach(function (d) { if (dayRec[d.id]) done++; });
+      var pct = done / active.length;
+      var opacity = pct === 0 ? 0.08 : 0.15 + pct * 0.85;
 
-      const cell = document.createElement('div');
+      var cell = document.createElement('div');
       cell.className = 'heatmap-cell';
       cell.style.opacity = opacity;
 
-      const shortDate = formatShortDate(dateKey);
+      var shortDate = formatShortDate(dateKey);
       cell.innerHTML = '<span class="tooltip">' + shortDate + ': ' + Math.round(pct * 100) + '%</span>';
-
       $heatmap.appendChild(cell);
     });
   }
 
   function formatShortDate(dateKey) {
-    const parts = dateKey.split('-');
-    const d = new Date(parts[0], parts[1] - 1, parts[2]);
+    var parts = dateKey.split('-');
+    var d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
     return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 

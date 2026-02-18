@@ -19,6 +19,7 @@
     <nav class="tab-nav">
       <button class="tab-btn active" data-tab="today">Today</button>
       <button class="tab-btn" data-tab="manage">Manage</button>
+      <button class="tab-btn" data-tab="points">Points</button>
       <button class="tab-btn" data-tab="analysis">Analysis</button>
     </nav>
 
@@ -52,10 +53,78 @@
           maxlength="60"
           autocomplete="off"
         >
+        <div class="points-picker">
+          <span class="points-star">★</span>
+          <input type="number" class="points-input" id="addPoints" min="1" max="50" value="5" title="Points weight">
+        </div>
         <button type="submit" class="add-btn">+ Add</button>
       </form>
 
       <div class="manage-list" id="manageList"></div>
+    </section>
+
+    <!-- POINTS TAB -->
+    <section class="tab-content" id="tab-points">
+      <div class="points-balance-card">
+        <div class="balance-glow"></div>
+        <span class="balance-label">Your Points Balance</span>
+        <span class="balance-value" id="pointsBalance">0</span>
+        <span class="balance-dollars" id="pointsDollars">= $0.00 to treat yourself</span>
+        <div class="balance-breakdown">
+          <div class="breakdown-item">
+            <span class="breakdown-value" id="pointsEarned">0</span>
+            <span class="breakdown-label">Earned</span>
+          </div>
+          <div class="breakdown-divider"></div>
+          <div class="breakdown-item">
+            <span class="breakdown-value" id="pointsSpent">0</span>
+            <span class="breakdown-label">Spent</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h3 class="section-title">Points Earned Over Time</h3>
+        <div class="chart-container">
+          <canvas id="pointsChart" width="480" height="200"></canvas>
+        </div>
+        <p class="empty-message" id="chartEmpty">Start checking off disciplines to see your growth!</p>
+      </div>
+
+      <div class="section-card treat-section">
+        <h3 class="section-title">Treat Yourself</h3>
+        <p class="treat-hint">You've worked hard. Spend some points and celebrate!</p>
+        <form class="reward-form" id="rewardForm">
+          <div class="reward-row">
+            <div class="reward-field">
+              <label class="reward-label" for="rewardPoints">★ Points to spend</label>
+              <input type="number" id="rewardPoints" class="reward-input" min="1" placeholder="50">
+            </div>
+            <div class="reward-field">
+              <label class="reward-label" for="rewardDesc">What did you get?</label>
+              <input type="text" id="rewardDesc" class="reward-input" maxlength="100" placeholder="A nice latte...">
+            </div>
+          </div>
+          <div class="image-upload" id="imageUpload">
+            <input type="file" id="rewardImage" accept="image/*" class="image-file-input">
+            <div class="image-upload-area" id="imageUploadArea">
+              <span class="upload-icon">📷</span>
+              <span class="upload-text">Add a memory photo (optional)</span>
+            </div>
+            <div class="image-preview-container" id="imagePreviewContainer" style="display:none">
+              <img class="image-preview" id="imagePreview">
+              <button type="button" class="image-remove-btn" id="imageRemoveBtn">✕</button>
+            </div>
+          </div>
+          <button type="submit" class="reward-submit-btn">Spend & Celebrate</button>
+        </form>
+      </div>
+
+      <div class="section-card">
+        <h3 class="section-title">My Treats Journal</h3>
+        <div class="rewards-journal" id="rewardsJournal"></div>
+        <p class="empty-message" id="journalEmpty">Your treats will appear here. You deserve them!</p>
+      </div>
     </section>
 
     <!-- ANALYSIS TAB -->
