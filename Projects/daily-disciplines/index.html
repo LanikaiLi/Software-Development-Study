@@ -69,7 +69,7 @@
         <div class="balance-glow"></div>
         <span class="balance-label">Your Points Balance</span>
         <span class="balance-value" id="pointsBalance">0</span>
-        <span class="balance-dollars" id="pointsDollars">= $0.00 to treat yourself</span>
+        <span class="balance-converted" id="pointsConverted">= 0 dollars to treat yourself</span>
         <div class="balance-breakdown">
           <div class="breakdown-item">
             <span class="breakdown-value" id="pointsEarned">0</span>
@@ -81,6 +81,14 @@
             <span class="breakdown-label">Spent</span>
           </div>
         </div>
+      </div>
+
+      <div class="exchange-rate-bar">
+        <span class="exchange-label">My rate:</span>
+        <input type="number" class="exchange-input" id="exchangeRate" min="1" value="100">
+        <span class="exchange-label">★ =</span>
+        <input type="number" class="exchange-input exchange-value-input" id="exchangeValue" min="1" value="1" step="any">
+        <input type="text" class="exchange-unit-input" id="exchangeUnit" value="dollar" maxlength="20" placeholder="unit">
       </div>
 
       <div class="section-card">

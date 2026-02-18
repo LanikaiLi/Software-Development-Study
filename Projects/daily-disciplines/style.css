@@ -610,7 +610,7 @@ body {
   line-height: 1.1;
 }
 
-.balance-dollars {
+.balance-converted {
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
@@ -651,6 +651,75 @@ body {
   width: 1px;
   height: 32px;
   background: rgba(255,255,255,0.25);
+}
+
+/* ---- Exchange Rate Bar ---- */
+
+.exchange-rate-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.exchange-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.exchange-input {
+  width: 56px;
+  padding: 6px 8px;
+  border: 2px solid var(--golden);
+  border-radius: 8px;
+  background: var(--bg);
+  font-family: var(--font);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+  outline: none;
+  transition: border-color 0.25s ease;
+  -moz-appearance: textfield;
+}
+
+.exchange-input::-webkit-outer-spin-button,
+.exchange-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.exchange-input:focus {
+  border-color: var(--accent);
+}
+
+.exchange-value-input {
+  width: 48px;
+}
+
+.exchange-unit-input {
+  width: 90px;
+  padding: 6px 10px;
+  border: 2px solid var(--golden);
+  border-radius: 8px;
+  background: var(--bg);
+  font-family: var(--font);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.25s ease;
+}
+
+.exchange-unit-input:focus {
+  border-color: var(--accent);
 }
 
 /* ---- Chart ---- */

@@ -11,6 +11,7 @@
     disciplines: 'dd_disciplines',
     records: 'dd_records',
     rewards: 'dd_rewards',
+    exchange: 'dd_exchange',
   };
 
   function loadDisciplines() {
@@ -46,6 +47,16 @@
     localStorage.setItem(STORAGE_KEYS.rewards, JSON.stringify(list));
   }
 
+  function loadExchange() {
+    var raw = localStorage.getItem(STORAGE_KEYS.exchange);
+    if (!raw) return { rate: 100, value: 1, unit: 'dollar' };
+    return JSON.parse(raw);
+  }
+
+  function saveExchange(settings) {
+    localStorage.setItem(STORAGE_KEYS.exchange, JSON.stringify(settings));
+  }
+
   function getTodayKey() {
     var d = new Date();
     var yyyy = d.getFullYear();
@@ -67,6 +78,7 @@
   var disciplines = loadDisciplines();
   var records = loadRecords();
   var rewards = loadRewards();
+  var exchange = loadExchange();
   var currentRange = 7;
   var pendingImageData = null;
 
@@ -83,9 +95,12 @@
   var $manageList = document.getElementById('manageList');
 
   var $pointsBalance = document.getElementById('pointsBalance');
-  var $pointsDollars = document.getElementById('pointsDollars');
+  var $pointsConverted = document.getElementById('pointsConverted');
   var $pointsEarned = document.getElementById('pointsEarned');
   var $pointsSpent = document.getElementById('pointsSpent');
+  var $exchangeRate = document.getElementById('exchangeRate');
+  var $exchangeValue = document.getElementById('exchangeValue');
+  var $exchangeUnit = document.getElementById('exchangeUnit');
   var $pointsChart = document.getElementById('pointsChart');
   var $chartEmpty = document.getElementById('chartEmpty');
   var $rewardForm = document.getElementById('rewardForm');
@@ -339,7 +354,26 @@
   //  POINTS TAB
   // ═══════════════════════════════════════════
 
-  var POINTS_PER_DOLLAR = 100;
+  function convertPoints(pts) {
+    if (exchange.rate <= 0) return 0;
+    return (pts / exchange.rate) * exchange.value;
+  }
+
+  function formatConverted(pts) {
+    var converted = convertPoints(pts);
+    var unit = exchange.unit || 'unit';
+    var plural = converted !== 1 ? pluralize(unit) : unit;
+    var display = converted % 1 === 0 ? String(converted) : converted.toFixed(2);
+    return '= ' + display + ' ' + plural + ' to treat yourself';
+  }
+
+  function pluralize(word) {
+    if (!word) return word;
+    var lower = word.toLowerCase();
+    if (lower.endsWith('s') || lower.endsWith('x') || lower.endsWith('sh') || lower.endsWith('ch')) return word + 'es';
+    if (lower.endsWith('y') && !'aeiou'.includes(lower[lower.length - 2])) return word.slice(0, -1) + 'ies';
+    return word + 's';
+  }
 
   function calcTotalEarned() {
     var total = 0;
@@ -396,9 +430,13 @@
     var balance = earned - spent;
 
     $pointsBalance.textContent = balance;
-    $pointsDollars.textContent = '= $' + (balance / POINTS_PER_DOLLAR).toFixed(2) + ' to treat yourself';
+    $pointsConverted.textContent = formatConverted(balance);
     $pointsEarned.textContent = earned;
     $pointsSpent.textContent = spent;
+
+    $exchangeRate.value = exchange.rate;
+    $exchangeValue.value = exchange.value;
+    $exchangeUnit.value = exchange.unit;
 
     renderChart();
     renderJournal();
@@ -626,6 +664,27 @@
       $rewardsJournal.appendChild(entry);
     });
   }
+
+  // ── Exchange Rate Settings ──────────────────
+
+  function onExchangeChange() {
+    var rate = parseInt($exchangeRate.value) || 100;
+    var value = parseFloat($exchangeValue.value) || 1;
+    var unit = $exchangeUnit.value.trim() || 'dollar';
+
+    if (rate < 1) rate = 1;
+    if (value < 0.01) value = 0.01;
+
+    exchange = { rate: rate, value: value, unit: unit };
+    saveExchange(exchange);
+
+    var balance = calcTotalEarned() - calcTotalSpent();
+    $pointsConverted.textContent = formatConverted(balance);
+  }
+
+  $exchangeRate.addEventListener('change', onExchangeChange);
+  $exchangeValue.addEventListener('change', onExchangeChange);
+  $exchangeUnit.addEventListener('input', onExchangeChange);
 
   // ── Delete Reward Entry ────────────────────
 
