@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Disciplines</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <h1 class="app-title">Daily Disciplines</h1>
+      <p class="app-date" id="todayDate"></p>
+    </header>
+
+    <nav class="tab-nav">
+      <button class="tab-btn active" data-tab="today">Today</button>
+      <button class="tab-btn" data-tab="manage">Manage</button>
+      <button class="tab-btn" data-tab="analysis">Analysis</button>
+    </nav>
+
+    <!-- TODAY TAB -->
+    <section class="tab-content active" id="tab-today">
+      <div class="progress-ring-container">
+        <svg class="progress-ring" viewBox="0 0 120 120">
+          <circle class="progress-ring-bg" cx="60" cy="60" r="52" />
+          <circle class="progress-ring-fill" id="progressCircle" cx="60" cy="60" r="52" />
+        </svg>
+        <div class="progress-text">
+          <span class="progress-done" id="progressDone">0</span>
+          <span class="progress-separator">of</span>
+          <span class="progress-total" id="progressTotal">0</span>
+        </div>
+      </div>
+
+      <div class="checklist" id="checklist"></div>
+    </section>
+
+    <!-- MANAGE TAB -->
+    <section class="tab-content" id="tab-manage">
+      <p class="manage-hint">Create your disciplines here. Toggle them on to include in your daily checklist.</p>
+
+      <form class="add-form" id="addForm">
+        <input
+          type="text"
+          class="add-input"
+          id="addInput"
+          placeholder="Add a new discipline..."
+          maxlength="60"
+          autocomplete="off"
+        >
+        <button type="submit" class="add-btn">+ Add</button>
+      </form>
+
+      <div class="manage-list" id="manageList"></div>
+    </section>
+
+    <!-- ANALYSIS TAB -->
+    <section class="tab-content" id="tab-analysis">
+      <div class="range-filter">
+        <button class="range-btn active" data-range="7">7 days</button>
+        <button class="range-btn" data-range="30">30 days</button>
+        <button class="range-btn" data-range="all">All time</button>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <span class="stat-value" id="statStreak">0</span>
+          <span class="stat-label">Day Streak</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="statAvg">0%</span>
+          <span class="stat-label">Avg Completion</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-value" id="statPerfect">0</span>
+          <span class="stat-label">Perfect Days</span>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h3 class="section-title">Per-Discipline Completion</h3>
+        <div class="discipline-rates" id="disciplineRates"></div>
+        <p class="empty-message" id="ratesEmpty">Add some disciplines to see stats here.</p>
+      </div>
+
+      <div class="section-card">
+        <h3 class="section-title">Daily Heatmap</h3>
+        <div class="heatmap-wrapper">
+          <div class="heatmap" id="heatmap"></div>
+        </div>
+        <div class="heatmap-legend">
+          <span>0%</span>
+          <div class="legend-squares">
+            <div class="legend-sq" style="opacity:0.15"></div>
+            <div class="legend-sq" style="opacity:0.4"></div>
+            <div class="legend-sq" style="opacity:0.65"></div>
+            <div class="legend-sq" style="opacity:0.9"></div>
+            <div class="legend-sq" style="opacity:1"></div>
+          </div>
+          <span>100%</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
