@@ -44,24 +44,47 @@
     <section class="tab-content" id="tab-manage">
       <p class="manage-hint">Create your disciplines here. Toggle them on to include in your daily checklist.</p>
 
-      <form class="add-form" id="addForm">
-        <input
-          type="text"
-          class="add-input"
-          id="addInput"
-          placeholder="Add a new discipline..."
-          maxlength="60"
-          autocomplete="off"
-        >
-        <div class="points-picker">
-          <span class="points-star">★</span>
-          <input type="number" class="points-input" id="addPoints" min="1" max="50" value="5" title="Points weight">
-        </div>
-        <button type="submit" class="add-btn">+ Add</button>
-      </form>
+      <button class="add-trigger-btn" id="addTriggerBtn">+ Add Discipline</button>
 
       <div class="manage-list" id="manageList"></div>
     </section>
+
+    <!-- ADD DISCIPLINE MODAL -->
+    <div class="modal-overlay" id="addModal">
+      <div class="modal-card">
+        <button class="modal-close" id="modalClose">✕</button>
+        <h3 class="modal-title">New Discipline</h3>
+        <form id="addForm">
+          <div class="modal-field">
+            <label class="modal-label" for="addInput">What discipline do you want to follow?</label>
+            <input
+              type="text"
+              class="modal-input"
+              id="addInput"
+              placeholder="e.g. Read for 30 minutes"
+              maxlength="60"
+              autocomplete="off"
+            >
+          </div>
+          <div class="modal-field">
+            <label class="modal-label" for="addPoints">How many points is it worth?</label>
+            <p class="modal-hint">Harder disciplines deserve more points!</p>
+            <div class="modal-points-row">
+              <button type="button" class="pts-preset" data-pts="2">2</button>
+              <button type="button" class="pts-preset" data-pts="5">5</button>
+              <button type="button" class="pts-preset" data-pts="10">10</button>
+              <button type="button" class="pts-preset" data-pts="15">15</button>
+              <button type="button" class="pts-preset" data-pts="20">20</button>
+              <div class="pts-custom">
+                <span class="points-star">★</span>
+                <input type="number" class="pts-custom-input" id="addPoints" min="1" max="50" value="5">
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="modal-submit">Add to My Disciplines</button>
+        </form>
+      </div>
+    </div>
 
     <!-- POINTS TAB -->
     <section class="tab-content" id="tab-points">

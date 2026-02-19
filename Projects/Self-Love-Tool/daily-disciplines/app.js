@@ -434,12 +434,53 @@
     renderManage();
   });
 
-  // ── Add Discipline ─────────────────────────
+  // ── Add Discipline Modal ────────────────────
+
+  var $addModal = document.getElementById('addModal');
+  var $addTriggerBtn = document.getElementById('addTriggerBtn');
+  var $modalClose = document.getElementById('modalClose');
+
+  $addTriggerBtn.addEventListener('click', function () {
+    $addInput.value = '';
+    $addPoints.value = 5;
+    document.querySelectorAll('.pts-preset').forEach(function (b) {
+      b.classList.toggle('selected', b.dataset.pts === '5');
+    });
+    $addModal.classList.add('open');
+    setTimeout(function () { $addInput.focus(); }, 100);
+  });
+
+  $modalClose.addEventListener('click', function () {
+    $addModal.classList.remove('open');
+  });
+
+  $addModal.addEventListener('click', function (e) {
+    if (e.target === $addModal) $addModal.classList.remove('open');
+  });
+
+  document.querySelectorAll('.pts-preset').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('.pts-preset').forEach(function (b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+      $addPoints.value = btn.dataset.pts;
+    });
+  });
+
+  $addPoints.addEventListener('input', function () {
+    document.querySelectorAll('.pts-preset').forEach(function (b) {
+      b.classList.toggle('selected', b.dataset.pts === $addPoints.value);
+    });
+  });
 
   $addForm.addEventListener('submit', function (e) {
     e.preventDefault();
     var name = $addInput.value.trim();
-    if (!name) return;
+    if (!name) {
+      $addInput.focus();
+      $addInput.style.borderColor = '#E07A5F';
+      setTimeout(function () { $addInput.style.borderColor = ''; }, 1000);
+      return;
+    }
 
     var pts = parseInt($addPoints.value) || 5;
     if (pts < 1) pts = 1;
@@ -453,10 +494,9 @@
       createdAt: getTodayKey(),
     });
     saveDisciplines(disciplines);
-    $addInput.value = '';
-    $addPoints.value = 5;
+
+    $addModal.classList.remove('open');
     renderManage();
-    $addInput.focus();
   });
 
   // ── Progress Ring ──────────────────────────
