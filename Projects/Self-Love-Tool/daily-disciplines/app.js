@@ -200,6 +200,115 @@
     return div.innerHTML;
   }
 
+  // ── Sound Engine (Web Audio API) ────────────
+
+  var audioCtx = null;
+
+  function getAudioCtx() {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    return audioCtx;
+  }
+
+  function playTone(freq, duration, type, volume, delay) {
+    try {
+      var ctx = getAudioCtx();
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.type = type || 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(volume || 0.3, ctx.currentTime + (delay || 0));
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + (delay || 0) + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(ctx.currentTime + (delay || 0));
+      osc.stop(ctx.currentTime + (delay || 0) + duration);
+    } catch (e) {
+      // Audio not supported — silently skip
+    }
+  }
+
+  function soundCheck() {
+    playTone(523, 0.15, 'sine', 0.35, 0);
+    playTone(659, 0.18, 'sine', 0.3, 0.1);
+  }
+
+  function soundUncheck() {
+    playTone(440, 0.12, 'sine', 0.15, 0);
+    playTone(370, 0.14, 'sine', 0.1, 0.08);
+  }
+
+  function soundVictory() {
+    playTone(523, 0.18, 'sine', 0.3, 0);
+    playTone(659, 0.18, 'sine', 0.3, 0.14);
+    playTone(784, 0.18, 'sine', 0.3, 0.28);
+    playTone(1047, 0.35, 'triangle', 0.25, 0.42);
+  }
+
+  // ── Visual Effects ─────────────────────────
+
+  function spawnSparkles(card) {
+    var checkbox = card.querySelector('.checkmark');
+    var rect = checkbox.getBoundingClientRect();
+    var cardRect = card.getBoundingClientRect();
+    var cx = rect.left + rect.width / 2 - cardRect.left;
+    var cy = rect.top + rect.height / 2 - cardRect.top;
+    var colors = ['#81B29A', '#F2CC8F', '#E07A5F', '#F4B8A8', '#C5DED3'];
+
+    for (var i = 0; i < 8; i++) {
+      var spark = document.createElement('div');
+      spark.className = 'sparkle';
+      var angle = (Math.PI * 2 / 8) * i + (Math.random() - 0.5) * 0.5;
+      var dist = 18 + Math.random() * 14;
+      spark.style.left = cx + 'px';
+      spark.style.top = cy + 'px';
+      spark.style.background = colors[Math.floor(Math.random() * colors.length)];
+      spark.style.setProperty('--sx', Math.cos(angle) * dist + 'px');
+      spark.style.setProperty('--sy', Math.sin(angle) * dist + 'px');
+      card.style.position = 'relative';
+      card.appendChild(spark);
+      (function (el) {
+        setTimeout(function () { el.remove(); }, 650);
+      })(spark);
+    }
+  }
+
+  function spawnFloatingPoints(card, pts) {
+    var el = document.createElement('div');
+    el.className = 'float-points';
+    el.textContent = '+' + pts + ' ★';
+    card.style.position = 'relative';
+    card.appendChild(el);
+    setTimeout(function () { el.remove(); }, 950);
+  }
+
+  function launchConfetti() {
+    var container = document.createElement('div');
+    container.className = 'confetti-container';
+    document.body.appendChild(container);
+
+    var colors = ['#E07A5F', '#F2CC8F', '#81B29A', '#F4B8A8', '#C5DED3', '#FFD700', '#FF6B6B'];
+    for (var i = 0; i < 50; i++) {
+      var piece = document.createElement('div');
+      piece.className = 'confetti-piece';
+      piece.style.left = Math.random() * 100 + '%';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.setProperty('--fall-distance', (window.innerHeight + 40) + 'px');
+      piece.style.setProperty('--fall-duration', (1.5 + Math.random() * 1.5) + 's');
+      piece.style.setProperty('--spin', (360 + Math.random() * 720) + 'deg');
+      piece.style.animationDelay = (Math.random() * 0.6) + 's';
+      piece.style.width = (6 + Math.random() * 6) + 'px';
+      piece.style.height = (10 + Math.random() * 8) + 'px';
+      container.appendChild(piece);
+    }
+
+    setTimeout(function () { container.remove(); }, 3500);
+  }
+
   // ── Checkbox Toggle ────────────────────────
 
   $checklist.addEventListener('change', function (e) {
@@ -214,10 +323,33 @@
     var card = e.target.closest('.discipline-card');
     if (e.target.checked) {
       card.classList.add('checked');
+
+      soundCheck();
+      spawnSparkles(card);
+
+      var disc = disciplines.find(function (d) { return d.id === id; });
+      if (disc) spawnFloatingPoints(card, disc.points);
+
+      card.classList.add('just-checked');
+      setTimeout(function () { card.classList.remove('just-checked'); }, 500);
     } else {
       card.classList.remove('checked');
+      soundUncheck();
     }
+
     updateProgress();
+
+    if (e.target.checked) {
+      var active = getActiveDisciplines();
+      var todayRec = records[today] || {};
+      var allDone = active.length > 0 && active.every(function (d) { return !!todayRec[d.id]; });
+      if (allDone) {
+        setTimeout(function () {
+          soundVictory();
+          launchConfetti();
+        }, 350);
+      }
+    }
   });
 
   // ── Render Manage Tab ──────────────────────
