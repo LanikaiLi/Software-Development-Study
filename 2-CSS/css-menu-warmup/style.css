@@ -1,0 +1,29 @@
+/* write your CSS here */
+.option-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px;
+    width: max-content;
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 24px;
+    background: white;
+    border: 1px solid #999;
+    border-radius: 50px;
+    font-family: Georgia, serif;
+    font-size: 1.1rem;
+    color: black;
+    width: 100%;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.menu-item:hover{
+    background-color: #c37373;
+}

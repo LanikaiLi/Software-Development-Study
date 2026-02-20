@@ -1,0 +1,171 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    line-height: 1.6; /* space between lines */
+    color: #2c2c2c; /* text color */
+    background: #fafafa; /* background color */
+}
+
+.header {
+    text-align: center;
+    padding: 48px 20px 32px;
+    background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
+    color: #938f8f; /* header text color, overrides body text color */
+}
+
+.logo {
+    font-size: 2.2rem;
+    font-weight: 300;
+    letter-spacing: 0.1em; /* space between letters */
+}
+
+.logo .chinese {
+    display: block; /* display as block element, this means the element will start on a new line and take up the full width of its container */
+    font-size: 1.4rem;
+    margin-top: 6px;
+    opacity: 0.9;
+}
+
+.tagline {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    opacity: 0.8;
+}
+
+.main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+}
+
+.hero {
+    margin-bottom: 40px;
+}
+
+.hero-photo {
+    display: block;
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+    margin: 0 auto 24px;
+    border-radius: 8px;
+}
+
+.intro {
+    font-size: 1.15rem;
+    color: #444;
+    text-align: center;
+}
+
+.section {
+    margin-bottom: 36px;
+}
+
+.section h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;  
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #ddd;
+}
+
+.section p {
+    margin-bottom: 12px;
+    color: #333;
+}
+
+.video-player {
+    margin-bottom: 24px;
+    background: #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    aspect-ratio: 16 / 9;
+    max-height: 340px;
+}
+
+.video-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    margin: 0;
+    color: #999;
+    font-size: 0.95rem;
+}
+
+.video-frame {
+    display: block;
+    border: none;
+}
+
+.play-btn {
+    padding: 6px 14px;
+    background: #2d2d2d;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease; 
+}
+
+.play-btn:hover {
+    background: #555;
+}
+
+.song-list {
+    list-style: none; /* remove the default bullet points */
+}
+
+.song-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+    color: #333;
+}
+
+.song-list li:last-child {
+    border-bottom: none;
+}
+
+.song-name {
+    flex: 1;
+}
+
+.listen-btn {
+    display: inline-block;
+    padding: 6px 14px;
+    background: #2d2d2d;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+}
+
+.listen-btn:hover {
+    background: #555;
+}
+
+.footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 0.85rem;
+    color: #888;
+    background: #eee;
+}

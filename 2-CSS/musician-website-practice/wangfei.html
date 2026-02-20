@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faye Wong | 王菲</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="header">
+        <h1 class="logo">Faye Wong <span class="chinese">王菲</span></h1>
+        <p class="tagline">Singer · Songwriter · Actress</p>
+    </header>
+
+    <main class="main">
+        <section class="hero">
+            <img src="500px-Faye_Wong_(cropped).jpg" alt="Faye Wong" class="hero-photo">
+            <p class="intro">Hong Kong singer-songwriter and actress. One of the most influential Cantopop and Mandopop artists of the 1990s and 2000s.</p>
+        </section>
+
+        <section class="section">
+            <h2>About</h2>
+            <p>Faye Wong (Chinese: 王菲; pinyin: Wáng Fēi; born 8 August 1969 in Beijing) moved to Hong Kong in 1987 and rose to fame with her distinctive voice and eclectic style. She is known for her ethereal tone, fashion influence, and hits in both Cantonese and Mandarin.</p>
+        </section>
+
+        <section class="section">
+            <h2>Notable Songs</h2>
+            <div class="video-player" id="videoPlayer">
+                <p class="video-placeholder" id="videoPlaceholder">Click Play on a song to listen here.</p>
+                <iframe id="videoFrame" class="video-frame" style="display: none;" width="100%" height="315" src="" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+            <ul class="song-list">
+                <li>
+                    <span class="song-name">夢中人 (Dreams)</span>
+                    <button type="button" class="play-btn" data-video-id="H3VpC8x3wL8">Play</button>
+                </li>
+                <li>
+                    <span class="song-name">紅豆 (Red Bean)</span>
+                    <button type="button" class="play-btn" data-video-id="5wmfXve11rM">Play</button>
+                </li>
+                <li>
+                    <span class="song-name">我願意 (I'm Willing)</span>
+                    <button type="button" class="play-btn" data-video-id="gkhyIdWnA44">Play</button>
+                </li>
+                <li>
+                    <span class="song-name">人間 (The Human World)</span>
+                    <button type="button" class="play-btn" data-video-id="5wmfXve11rM">Play</button>
+                </li>
+                <li>
+                    <span class="song-name">容易受傷的女人 (Vulnerable Woman)</span>
+                    <button type="button" class="play-btn" data-video-id="5wmfXve11rM">Play</button>
+                </li>
+                <li>
+                    <span class="song-name">天空 (Sky)</span>
+                    <button type="button" class="play-btn" data-video-id="OD5ENqZMKsQ">Play</button>
+                </li>
+            </ul>
+        </section>
+
+        <section class="section">
+            <h2>Film &amp; Music</h2>
+            <p>She has acted in films such as <em>Chungking Express</em> (1994) and <em>Chinese Odyssey 2002</em>, and released many acclaimed albums including <em>Faye Wong</em>, <em>Restless</em>, and <em>Laughing in the Wind</em>.</p>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>A tribute page · 王菲</p>
+    </footer>
+    <script>
+        document.querySelectorAll('.play-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var id = this.getAttribute('data-video-id');
+                var frame = document.getElementById('videoFrame');
+                var placeholder = document.getElementById('videoPlaceholder');
+                frame.src = 'https://www.youtube.com/embed/' + id + '?autoplay=1';
+                frame.style.display = 'block';
+                placeholder.style.display = 'none';
+            });
+        });
+    </script>
+</body>
+</html>
