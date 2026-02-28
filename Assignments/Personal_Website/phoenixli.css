@@ -330,6 +330,61 @@ footer a:hover {
     text-decoration: underline;
 }
 
+/* ── Vinyl Music Button ── */
+.vinyl-btn {
+    position: absolute;
+    bottom: 2rem;
+    right: 3rem;
+    z-index: 10;
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    border: 2px solid rgba(232, 160, 191, 0.5);
+    cursor: pointer;
+    background:
+        radial-gradient(circle at center, #e8a0bf 6px, transparent 6px),
+        radial-gradient(circle at center, #1a1a1a 8px, transparent 8px),
+        radial-gradient(circle at center, transparent 14px, rgba(232, 160, 191, 0.15) 14px, rgba(232, 160, 191, 0.15) 15px, transparent 15px),
+        radial-gradient(circle at center, transparent 20px, rgba(232, 160, 191, 0.1) 20px, rgba(232, 160, 191, 0.1) 21px, transparent 21px),
+        #1a1a1a;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    transition: box-shadow 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.vinyl-btn:hover {
+    box-shadow: 0 2px 20px rgba(232, 160, 191, 0.3);
+}
+
+.vinyl-label {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.5rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    color: rgba(240, 236, 230, 0.7);
+    pointer-events: none;
+}
+
+.vinyl-btn {
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.vinyl-btn.playing {
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(232, 160, 191, 0.6); }
+}
+
 /* ── Responsive ── */
 
 /* Wide screens: keep head visible */
@@ -365,6 +420,11 @@ footer a:hover {
         left: 1.5rem;
         right: 1.5rem;
         gap: 1rem;
+    }
+
+    .vinyl-btn {
+        right: 1.5rem;
+        bottom: 1.5rem;
     }
 
     .content {

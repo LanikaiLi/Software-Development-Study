@@ -11,6 +11,9 @@
 </head>
 <body>
 
+    <!-- ── Music Player ── -->
+    <audio id="bgMusic" src="song.mp3" loop></audio>
+
     <!-- ── Hero ── -->
     <section class="hero">
         <img src="artistic-photo-wide.png" alt="Phoenix Li" class="hero-bg">
@@ -35,6 +38,10 @@
         <div class="hero-content">
             <h1 class="hero-name">Phoenix<br><span class="hero-accent">Li</span></h1>
         </div>
+
+        <button id="vinylBtn" class="vinyl-btn" aria-label="Toggle music">
+            <span class="vinyl-label">▶</span>
+        </button>
 
         <div class="hero-tags">
             <span class="hero-tag">Developer</span>
@@ -117,5 +124,22 @@
         <p>Made by Phoenix Li · <a href="https://github.com/LanikaiLi">LanikaiLi</a></p>
     </footer>
 
+    <script>
+        var btn = document.getElementById('vinylBtn');
+        var music = document.getElementById('bgMusic');
+        var label = btn.querySelector('.vinyl-label');
+
+        btn.addEventListener('click', function () {
+            if (music.paused) {
+                music.play();
+                btn.classList.add('playing');
+                label.textContent = '||';
+            } else {
+                music.pause();
+                btn.classList.remove('playing');
+                label.textContent = '▶';
+            }
+        });
+    </script>
 </body>
 </html>
