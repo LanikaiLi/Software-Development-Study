@@ -580,9 +580,10 @@ footer a:hover {
         gap: 1rem;
     }
 
+    /* Sit higher so the whole button is above the home indicator / screen edge */
     .vinyl-player {
         right: 1.5rem;
-        bottom: 1.5rem;
+        bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px));
         width: 86px;
         height: 100px;
     }
