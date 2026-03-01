@@ -39,9 +39,14 @@
             <h1 class="hero-name">Phoenix<br><span class="hero-accent">Li</span></h1>
         </div>
 
-        <button id="vinylBtn" class="vinyl-btn" aria-label="Toggle music">
-            <span class="vinyl-label">▶</span>
-        </button>
+        <div id="vinylPlayer" class="vinyl-player">
+            <div class="tonearm">
+                <div class="tonearm-lower"></div>
+            </div>
+            <button id="vinylBtn" class="vinyl-btn" aria-label="Toggle music">
+                <span class="vinyl-label">▶</span>
+            </button>
+        </div>
 
         <div class="hero-tags">
             <span class="hero-tag">Developer</span>
@@ -125,6 +130,7 @@
     </footer>
 
     <script>
+        var player = document.getElementById('vinylPlayer');
         var btn = document.getElementById('vinylBtn');
         var music = document.getElementById('bgMusic');
         var label = btn.querySelector('.vinyl-label');
@@ -133,10 +139,12 @@
             if (music.paused) {
                 music.play();
                 btn.classList.add('playing');
+                player.classList.add('playing');
                 label.textContent = '||';
             } else {
                 music.pause();
                 btn.classList.remove('playing');
+                player.classList.remove('playing');
                 label.textContent = '▶';
             }
         });

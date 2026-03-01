@@ -330,49 +330,113 @@ footer a:hover {
     text-decoration: underline;
 }
 
-/* ── Vinyl Music Button ── */
-.vinyl-btn {
+/* ── Vinyl Music Player ── */
+.vinyl-player {
     position: absolute;
     bottom: 2rem;
     right: 3rem;
     z-index: 10;
-    width: 62px;
-    height: 62px;
-    border-radius: 50%;
-    border: 2px solid rgba(232, 160, 191, 0.5);
+    width: 72px;
+    height: 86px;
     cursor: pointer;
-    background:
-        radial-gradient(circle at center, #e8a0bf 6px, transparent 6px),
-        radial-gradient(circle at center, #1a1a1a 8px, transparent 8px),
-        radial-gradient(circle at center, transparent 14px, rgba(232, 160, 191, 0.15) 14px, rgba(232, 160, 191, 0.15) 15px, transparent 15px),
-        radial-gradient(circle at center, transparent 20px, rgba(232, 160, 191, 0.1) 20px, rgba(232, 160, 191, 0.1) 21px, transparent 21px),
-        #1a1a1a;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
-    transition: box-shadow 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.vinyl-btn:hover {
-    box-shadow: 0 2px 20px rgba(232, 160, 191, 0.3);
-}
-
-.vinyl-label {
-    font-family: 'Inter', sans-serif;
-    font-size: 0.5rem;
-    font-weight: 500;
-    letter-spacing: 0.15em;
-    color: rgba(240, 236, 230, 0.7);
-    pointer-events: none;
 }
 
 .vinyl-btn {
+    width: 66px;
+    height: 66px;
+    border-radius: 50%;
+    border: 2px solid rgba(232, 160, 191, 0.4);
+    cursor: pointer;
+    background:
+        radial-gradient(circle at center, #e8a0bf 5px, transparent 5px),
+        radial-gradient(circle at center, #1a1a1a 7px, transparent 7px),
+        radial-gradient(circle at center, transparent 12px, rgba(232, 160, 191, 0.15) 12px, rgba(232, 160, 191, 0.15) 13px, transparent 13px),
+        radial-gradient(circle at center, transparent 18px, rgba(232, 160, 191, 0.1) 18px, rgba(232, 160, 191, 0.1) 19px, transparent 19px),
+        radial-gradient(circle at center, transparent 24px, rgba(232, 160, 191, 0.08) 24px, rgba(232, 160, 191, 0.08) 25px, transparent 25px),
+        #1a1a1a;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    bottom: 0;
+    left: 0;
     animation: pulse 2s ease-in-out infinite;
 }
 
 .vinyl-btn.playing {
     animation: spin 3s linear infinite;
+}
+
+.vinyl-label {
+    font-size: 0.7rem;
+    color: rgba(240, 236, 230, 0.7);
+    pointer-events: none;
+}
+
+/* Tonearm — two-segment arm with bend, like a real turntable */
+.tonearm {
+    position: absolute;
+    top: 0;
+    right: 12px;
+    width: 3px;
+    height: 24px;
+    background: linear-gradient(to bottom, transparent 5px, #ccc 5px, #aaa 100%);
+    border-radius: 0 0 1px 1px;
+    transform-origin: 50% 5px;
+    transform: rotate(35deg);
+    transition: transform 0.4s ease;
+    pointer-events: none;
+    z-index: 11;
+}
+
+/* Pivot circle */
+.tonearm::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 10px;
+    height: 10px;
+    background: #ccc;
+    border-radius: 50%;
+    border: 1px solid #999;
+}
+
+/* Lower angled segment */
+.tonearm-lower {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    margin-left: -1.5px;
+    width: 3px;
+    height: 20px;
+    background: linear-gradient(to bottom, #aaa 0%, #888 100%);
+    border-radius: 0 0 2px 2px;
+    transform: rotate(-25deg);
+    transform-origin: top center;
+}
+
+/* Needle tip */
+.tonearm-lower::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5px;
+    height: 5px;
+    background: #e8a0bf;
+    border-radius: 50%;
+}
+
+.vinyl-player.playing .tonearm {
+    transform: rotate(0deg);
+}
+
+.vinyl-btn:hover {
+    box-shadow: 0 2px 20px rgba(232, 160, 191, 0.3);
 }
 
 @keyframes spin {
@@ -422,7 +486,7 @@ footer a:hover {
         gap: 1rem;
     }
 
-    .vinyl-btn {
+    .vinyl-player {
         right: 1.5rem;
         bottom: 1.5rem;
     }
