@@ -339,6 +339,8 @@ footer a:hover {
     width: 72px;
     height: 86px;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .vinyl-btn {
@@ -347,6 +349,8 @@ footer a:hover {
     border-radius: 50%;
     border: 2px solid rgba(232, 160, 191, 0.4);
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
     background:
         radial-gradient(circle at center, #e8a0bf 5px, transparent 5px),
         radial-gradient(circle at center, #1a1a1a 7px, transparent 7px),
@@ -579,6 +583,13 @@ footer a:hover {
     .vinyl-player {
         right: 1.5rem;
         bottom: 1.5rem;
+        width: 86px;
+        height: 100px;
+    }
+
+    .vinyl-btn {
+        width: 78px;
+        height: 78px;
     }
 
     .content {

@@ -139,7 +139,7 @@
         var btn = document.getElementById('vinylBtn');
         var music = document.getElementById('bgMusic');
 
-        btn.addEventListener('click', function () {
+        function toggleMusic() {
             if (music.paused) {
                 music.play();
                 btn.classList.add('playing');
@@ -149,6 +149,12 @@
                 btn.classList.remove('playing');
                 player.classList.remove('playing');
             }
+        }
+
+        player.addEventListener('click', toggleMusic);
+        player.addEventListener('touchend', function (e) {
+            e.preventDefault();
+            toggleMusic();
         });
     </script>
 </body>

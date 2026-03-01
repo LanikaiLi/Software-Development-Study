@@ -11,7 +11,7 @@
 }
 
 * { /* * is used to select all elements */
-    box-sizing: border-box;
+    box-sizing: border-box; /* box-sizing is used to control the sizing of elements, for example, when you set width and  */
 }
 
 html {
