@@ -50,9 +50,7 @@
             <div class="tonearm">
                 <div class="tonearm-lower"></div>
             </div>
-            <button id="vinylBtn" class="vinyl-btn" aria-label="Toggle music">
-                <span class="vinyl-label">▶</span>
-            </button>
+            <button id="vinylBtn" class="vinyl-btn" aria-label="Toggle music"></button>
         </div>
 
         <div class="hero-tags">
@@ -140,19 +138,16 @@
         var player = document.getElementById('vinylPlayer');
         var btn = document.getElementById('vinylBtn');
         var music = document.getElementById('bgMusic');
-        var label = btn.querySelector('.vinyl-label');
 
         btn.addEventListener('click', function () {
             if (music.paused) {
                 music.play();
                 btn.classList.add('playing');
                 player.classList.add('playing');
-                label.textContent = '||';
             } else {
                 music.pause();
                 btn.classList.remove('playing');
                 player.classList.remove('playing');
-                label.textContent = '▶';
             }
         });
     </script>
