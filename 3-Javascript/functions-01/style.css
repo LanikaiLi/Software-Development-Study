@@ -1,0 +1,7 @@
+body {
+    align-items: center;
+    display: flex;
+    font-size: 50px;
+    justify-content: center;
+    min-height: 90vh;
+}
