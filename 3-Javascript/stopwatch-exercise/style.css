@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #dbe4d8;
+	font-family: "VT323", monospace;
+	color: #101317;
+}
+
+.watch {
+	width: min(92vw, 430px);
+	padding: 26px;
+	background: #5a616b;
+}
+
+.watch-title {
+	margin: 0 0 16px 0;
+	text-align: center;
+	font-size: 29px;
+	letter-spacing: 3px;
+}
+
+.time {
+	margin: 0;
+	padding: 19px;
+	text-align: center;
+	font-size: 56px;
+	color: #1f2a1b;
+	background: #b6caa6;
+}
+
+.controls {
+	margin-top: 19px;
+	display: flex;
+	gap: 13px;
+}
+
+button {
+	flex: 1;
+	background: #d9d9d9;
+	color: #101317;
+	font-family: inherit;
+	font-size: 26px;
+	padding: 10px;
+	cursor: pointer;
+}
+
+button:hover {
+    background: #e2bcbc;
+}
+
+button:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
