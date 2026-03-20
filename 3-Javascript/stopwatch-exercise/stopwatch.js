@@ -31,3 +31,4 @@ stopButton.onclick = () => {
     startButton.disabled = false
     stopButton.disabled = true
 }
+
