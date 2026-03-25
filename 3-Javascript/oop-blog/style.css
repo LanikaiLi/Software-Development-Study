@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+body {
+	background: #111315;
+	color: #eceff2;
+	font-family: 'Space Grotesk', sans-serif;
+	margin: 0;
+}
+
+.app {
+	margin: 0 auto;
+	padding: 32px 0 48px;
+	width: 80%;
+}
+
+.site-header {
+	color: #9ea6af;
+	font-size: 14px;
+	font-weight: 700;
+	letter-spacing: 0.2em;
+	margin: 0 0 20px;
+	opacity: .7;
+	text-transform: uppercase;
+}
+
+.feed {
+	border-top: 4px solid #262b30;
+}
+
+.post {
+	border-bottom: 4px solid #262b30;
+	padding: 16px 2px 16px;
+}
+
+.post-info {
+	color: #9ea6af;
+	font-family: 'IBM Plex Mono', monospace;
+	font-size: 14px;
+	margin: 0;
+}
+
+.post-body {
+	font-size: 19px;
+	line-height: 1.5;
+	margin: 10px 0 0;
+}
