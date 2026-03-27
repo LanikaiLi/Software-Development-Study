@@ -6,7 +6,7 @@ const animals = ["purple horse", "white hamster", "blue dog", "yellow cat", "gre
 
 // If you finish early, here's a more challenging part two: write a function called mostCommonAnimal that takes in the same array and returns the type of animal that's the most common on the list, regardless of color. For example, for the above list it would return "dog"
 
-// my logic: loop through the array anb store the picked ones in a new array, how to pick? i change each item to a tuple, and i only check the first element of the tuple.
+// my logic: loop through the array anb store the picked ones in a new array, how to pick? i break each item to a tuple, and i only check the first element of the tuple.
 
 const filterByColor = (animals, color) => {
     let filteredAnimals = []
