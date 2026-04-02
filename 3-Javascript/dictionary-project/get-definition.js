@@ -1,4 +1,4 @@
 const getDefinitionAndThen = (word, callback) => { //callback is a function that is called when the data is fetched, this getDefinitionAndThen function is a higher order function because it takes a function as an argument
   fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
-    .then(response => response.json())
+    .then(response => response.json()) // .then means we do something only after the fetch is completed, like 'after fetch completed then we do...'
     .then(json => callback(json)) // callback is a function that is called when the data is fetched, and it is a function that requires a parameter, here we pass json as the parameter, but here in this file we do not define the exact function that will be called, we do that in the simple-dictionary.js file. 可以记成 get-definition.js = 负责“什么时候、用什么数据去调”；simple-dictionary.js = 负责“调了之后要干嘛”。
