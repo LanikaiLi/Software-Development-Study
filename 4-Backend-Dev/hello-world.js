@@ -1,0 +1,1 @@
+console.log(process.argv) // and then you try type 'node hello-world.js "Hello World"' in the terminal
