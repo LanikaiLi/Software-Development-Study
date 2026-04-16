@@ -1,3 +1,4 @@
+import movies from './movie.js'
 // to work on this server, you need to have node.js installed, then run npm install express to install the express library, then run node server.js to start the server
 // in the terminal, you can type 'node server.js' to start the server, then you can go to the browser and type 'http://localhost:3000' to see the welcome message
 // to stop the server, you can press Ctrl + C in the terminal
@@ -7,14 +8,14 @@ const express = require('express') // imports the Express library into the file.
 
 const app = express() // calls the express function to create a new application instance. This `app` object is what you use to define routes, set up middleware, and start the server.
 
-const movies = [
-    {title: 'Mario Galaxy', starring: ['Chris Pratt', 'Anya Taylor Joy']},
-    {title: 'The Drama', starring: ['Zendaya', 'Robert Pattinson']},
-    {title: 'Scream 7', starring: ['Neve Campbell', 'Jasmin Savoy Brown']},
-    {title: 'You Me & Tuscany', starring: ['Regé-Jean Page', 'Halle Bailey']},
-    {title: 'Nirvana the Band the Show the Movie', starring: ['Matt Johnson', 'Jay McCarrol']},
-    {title: 'Hamnet', starring: ['Jessie Buckley', 'Paul Mescal']}
-  ]
+// const movies = [
+//     {title: 'Mario Galaxy', starring: ['Chris Pratt', 'Anya Taylor Joy']},
+//     {title: 'The Drama', starring: ['Zendaya', 'Robert Pattinson']},
+//     {title: 'Scream 7', starring: ['Neve Campbell', 'Jasmin Savoy Brown']},
+//     {title: 'You Me & Tuscany', starring: ['Regé-Jean Page', 'Halle Bailey']},
+//     {title: 'Nirvana the Band the Show the Movie', starring: ['Matt Johnson', 'Jay McCarrol']},
+//     {title: 'Hamnet', starring: ['Jessie Buckley', 'Paul Mescal']}
+//   ]
 
   app.get("/", (req, res) => {
     res.json({
