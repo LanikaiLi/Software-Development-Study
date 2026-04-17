@@ -8,6 +8,7 @@ import movies from './movie.js'
 // const express = require('express') // imports the Express library into the file. `require()` is how Node.js loads installed packages from node_modules.
 
 const app = express() // calls the express function to create a new application instance. This `app` object is what you use to define routes, set up middleware, and start the server.
+app.use(express.json()) // this is to parse the incoming request body as JSON, if the request body is not JSON, it will be parsed as a string
 
 // const movies = [
 //     {title: 'Mario Galaxy', starring: ['Chris Pratt', 'Anya Taylor Joy']},
@@ -35,7 +36,40 @@ app.get("/movies/:name", (req, res) => {
 })
 
 // exercise: try to build a route to find all movies starring a specific actor
+app.get("/movies/starring/:actor", (req, res) => {
+    console.log(req.params.actor)
+    const selectedMovies = movies.filter(movie => movie.starring.includes(req.params.actor))
+    res.json(selectedMovies)
+})
+// POST request below
 
+let counter  =  20
+
+app.post("/movies", (req, res) => {
+    console.log(req.body)
+
+    const newMovie = {
+        title: req.body.title,
+        starring: req.body.starring,
+        year: req.body.year,
+        watched: req.body.watched,
+        id: movies.length + 1,
+        counter: counter++
+    }
+
+    movies.push(newMovie)
+    res.status(201).json(newMovie)
+})
+
+// DELETE request below
+app.delete("/movies/:id", (req, res) => {
+    const id = req.params.id
+    const index = movies.findIndex(movie => movie.id === id)
+    if (index !== -1) {
+        movies.splice(index, 1)
+        res.status(204).send()
+    }
+})
 
 const port = 3000 // this is the port number that the server will listen on
 app.listen(port, () => { // remember, app.listen has to be put after all the routes are defined, if you put it before routes (app.get("/movies", (req, res) => { ... })), the server will not start
