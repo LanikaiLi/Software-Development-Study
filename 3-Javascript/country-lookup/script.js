@@ -3,7 +3,7 @@ const countryFlag = document.getElementById("country-flag")
 const countryDescription = document.getElementById("country-description")
 const input = document.querySelector("input") // querySelector is more general and flexible than getElementById, because it can  search by tag name, class name, and id.
 
-document.addEventListener("keypress", (event) => {
+document.addEventListener("keypress", (event) => { // event listener is a function that listens for a specific event to occur, in this case, the keypress event. event is an object that contains information about the event that occurred.
     if (event.key === "Enter") {
         // console.log("Enter key pressed.")
         const country = input.value
@@ -11,9 +11,9 @@ document.addEventListener("keypress", (event) => {
     }
 })
 
-async function requestCountryInfo (countryName) {
-    const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`)
-    const country = await response.json()
+async function requestCountryInfo (countryName) { // Async function required for using await keyword
+    const response = await fetch(`https://restcountries.com/v3.1/name/${countryName}`) // const response = await fetch(URL) - makes the request and waits
+    const country = await response.json() // const country = await response.json() - converts response to JSON format
     addInformationToPage(country[0])
 }
 
