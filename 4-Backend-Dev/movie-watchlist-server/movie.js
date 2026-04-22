@@ -1,6 +1,6 @@
 const movies = [
-    {title:'Mario Galaxy',starring:['Chris Pratt','Anya Taylor-Joy'],year:2026,watched:false,id:1},
-    {title:'The Drama',starring:['Zendaya','Robert Pattinson'],year:2026,watched:false,id:2},
+    {title:'Mario Galaxy',starring:['Chris Pratt','Anya Taylor-Joy'],year:2026,watched:true,id:1},
+    {title:'The Drama',starring:['Zendaya','Robert Pattinson'],year:2026,watched:true,id:2},
     {title:'Scream 7',starring:['Neve Campbell','Jasmin Savoy Brown'],year:2026,watched:false,id:3},
     {title:'You Me & Tuscany',starring:['Regé-Jean Page','Halle Bailey'],year:2026,watched:false,id:4},
     {title:'Nirvanna the Band the Show the Movie',starring:['Matt Johnson','Jay McCarrol'],year:2025,watched:false,id:5},
