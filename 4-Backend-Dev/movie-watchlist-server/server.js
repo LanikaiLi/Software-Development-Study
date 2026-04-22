@@ -29,11 +29,23 @@ app.get("/movies", (req, res) => {
     res.json(movies)
 })
 
+// exercise: try to build a route which returns all movies watched
+// Must be registered before /movies/:name, otherwise "watched" is treated as a movie title.
+app.get("/movies/watched", (req, res) => {
+    const watched = movies.filter(movie => movie.watched)
+    res.json(watched)
+})
+
 app.get("/movies/:name", (req, res) => {
     console.log(req.params.name)
     const selectedMovie = movies.find(movie => movie.title === req.params.name)
     res.json(selectedMovie) 
 })
+
+// app.get("/movies/watched", (req, res) => {
+//     const watched = movies.filter(movie => movie.watched)
+//     res.json(watched)
+// })
 
 // exercise: try to build a route to find all movies starring a specific actor
 app.get("/movies/starring/:actor", (req, res) => {
@@ -41,6 +53,7 @@ app.get("/movies/starring/:actor", (req, res) => {
     const selectedMovies = movies.filter(movie => movie.starring.includes(req.params.actor))
     res.json(selectedMovies)
 })
+
 // POST request below
 
 let counter  =  20
@@ -63,12 +76,24 @@ app.post("/movies", (req, res) => {
 
 // DELETE request below
 app.delete("/movies/:id", (req, res) => {
-    const id = req.params.id
+    const id = parseInt(req.params.id)
     const index = movies.findIndex(movie => movie.id === id)
-    if (index !== -1) {
-        movies.splice(index, 1)
-        res.status(204).send()
+
+    if (index === -1) {
+        return res.status(404).json({error: `No movie with id ${id}.`})
     }
+
+    const deletedMovie = movies.splice(index, 1)
+    res.json({message: "Deleted:", movie: deletedMovie})
+})
+
+// PATCH request below
+//PATCH and PUT are used to update the data in the server, the difference is that PATCH is used to update a part of the data, while PUT is used to update the entire data.
+app.patch("/movies/:id/toggle-watched", (req, res) => {
+    const id = parseInt(req.params.id)
+    const movie = movies.find(movie => movie.id === id)
+    movie.watched = !movie.watched
+    res.json({message: "Toggled watched status of:", movie: movie})
 })
 
 const port = 3000 // this is the port number that the server will listen on

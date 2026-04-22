@@ -1,0 +1,5 @@
+$kind: http-request
+name: GET ALL WATCHED MOVIES
+url: ""
+method: GET
+order: 4503509146642458

@@ -1,0 +1,5 @@
+$kind: http-request
+name: DELETE A MOVIE
+url: ""
+method: GET
+order: 4485918403640115
