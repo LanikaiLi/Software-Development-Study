@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+body {
+    font-family: "Atkinson Hyperlegible", sans-serif;
+    font-size: 20px;
+}
+
+li {
+    display: flex;
+    border-bottom: 2px solid #ddd;
+    flex-direction: row;
+    list-style: none;
+    margin: 5px;
+}
+
+p {
+    margin: 0;
+    margin-right: 30px;
+}
+
+li div {
+    background-color: rgb(80, 120, 190);
+    border-radius: 16px;
+    color: white;
+    cursor: pointer;
+    margin-bottom: 5px;
+    padding: 2px 9px;
+}
+
+.green-button {
+    background-color: rgb(80, 190, 120);
+}
+
+.watched-button:hover {
+    background-color: rgb(140, 156, 183);
+}
+
+.delete-button {
+    background-color: rgb(180, 50, 20);
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.delete-button:hover {
+    background-color: rgb(225, 105, 72);
+}
