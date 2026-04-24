@@ -5,10 +5,22 @@ import movies from './movie.js'
 // to stop the server, you can press Ctrl + C in the terminal
 // every time you make a change to the server.js file, you need to restart the server by typing 'node server.js' in the terminal by ctrl + c to stop the server and then run the command again
 
-// const express = require('express') // imports the Express library into the file. `require()` is how Node.js loads installed packages from node_modules.
 
+// const express = require('express') // imports the Express library into the file. `require()` is how Node.js loads installed packages from node_modules.
 const app = express() // calls the express function to create a new application instance. This `app` object is what you use to define routes, set up middleware, and start the server.
 app.use(express.json()) // this is to parse the incoming request body as JSON, if the request body is not JSON, it will be parsed as a string
+
+app.use((req, res, next) => { // this is to allow the server to accept requests from other domains, so that the client can send a request to the server from another domain
+    res.set(`Access-Control-Allow-Origin`, `*`)
+
+    if (req.method === `OPTIONS`) {
+        res.set(`Access-Control-Allow-Methods`, `POST,PATCH,DELETE`)
+        return res.sendStatus(204)
+    }
+
+    next()
+})
+
 
 // const movies = [
 //     {title: 'Mario Galaxy', starring: ['Chris Pratt', 'Anya Taylor Joy']},
