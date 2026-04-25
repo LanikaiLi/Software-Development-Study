@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="phoenixli.css">
+    <script src="script.js" defer></script>
 </head>
 <body>
 
@@ -75,28 +76,20 @@
             <div class="section-label">02 — Skills</div>
             <h2>What I work with</h2>
             <p>A snapshot of my toolkit — growing every day.</p>
-            <div class="skills-row">
-                <span class="skill">HTML / CSS</span>
-                <span class="skill">JavaScript</span>
-                <span class="skill">React</span>
-                <span class="skill">Git</span>
-                <span class="skill">Python</span>
-                <span class="skill">SQL</span>
-                <span class="skill">dbt (Data Build Tool)</span>
-                <span class="skill">Data Management Platforms</span>
-                <span class="skill">AWS/GCP/Azure</span>
-                <span class="skill">Terraform & Atmos</span>
-                <span class="skill">Kafka & Flink</span>
-                <span class="skill">Datadog</span>
-                <span class="skill">Zapier</span>
-                <span class="skill">Databricks & Snowflake & BigQuery</span>
-                <span class="skill">CI/CD</span>
-                <span class="skill">Gen AI</span>
-                <span class="skill">Empathy-driven UX Thinking</span>
-                <span class="skill">Empathy-driven User Experience</span>
-                <span class="skill">Empathy-driven Product Design</span>
-                <span class="skill">Heart-touching Public Speaking</span>
+            <div class="skills-toolbar">
+                <p class="skills-filter-label" id="skillsFilterLabel">Filter by category</p>
+                <div class="skills-filters" role="group" aria-labelledby="skillsFilterLabel">
+                    <button type="button" class="skills-filter-btn active" data-category="all" aria-pressed="true">All</button>
+                    <button type="button" class="skills-filter-btn" data-category="build" aria-pressed="false">Build</button>
+                    <button type="button" class="skills-filter-btn" data-category="data" aria-pressed="false">Data</button>
+                    <button type="button" class="skills-filter-btn" data-category="cloud" aria-pressed="false">Cloud</button>
+                    <button type="button" class="skills-filter-btn" data-category="people" aria-pressed="false">People</button>
+                </div>
+                <div class="skills-row" id="skillsRow"></div>
             </div>
+            <noscript>
+                <p class="skills-noscript-hint">Enable JavaScript to browse skills by category.</p>
+            </noscript>
         </section>
 
         <section id="life">
@@ -143,7 +136,7 @@
         <p>Made by Phoenix Li · <a href="https://github.com/LanikaiLi">LanikaiLi</a></p>
     </footer>
 
-    <script>
+    <!-- <script>
         var player = document.getElementById('vinylPlayer');
         var btn = document.getElementById('vinylBtn');
         var music = document.getElementById('bgMusic');
@@ -165,6 +158,6 @@
             e.preventDefault();
             toggleMusic();
         });
-    </script>
+    </script> -->
 </body>
 </html>
