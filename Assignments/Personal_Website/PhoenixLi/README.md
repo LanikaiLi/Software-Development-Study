@@ -8,7 +8,7 @@ This file saves what we learned while moving the music player script out of the 
 
 - **`PhoenixLi.html`** — the page.
 - **`phoenixli.css`** — styles (including the vinyl look and the `.playing` state for the tonearm).
-- **`script.js`** — behavior: play/pause audio and toggle the “playing” look.
+- **`script.js`** — behavior: play/pause audio and toggle the “playing” look; **Skills** chips are built from the `SKILLS` array (name + category). Edit that array to add or re-label skills; filter buttons in the HTML use `data-category` values `all`, `build`, `data`, `cloud`, and `people`.
 
 ---
 
