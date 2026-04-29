@@ -1,6 +1,9 @@
 require('dotenv').config();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = process.env.MONGODB_URI;
+const express = require('express');
+const app = express();
+app.use(express.json());
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -11,7 +14,7 @@ const client = new MongoClient(uri, {
   }
 });
 
-async function run() {
+async function connectToMongoDB() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
@@ -23,4 +26,18 @@ async function run() {
     await client.close();
   }
 }
-run().catch(console.dir);
+
+// connectToMongoDB().catch(console.dir);
+
+async function startServer() {
+  try {
+    await connectToMongoDB();
+    app.listen(3000, () => {
+      console.log("Server is running on port 3000");
+    });
+  } catch (error) {
+    console.error("Error starting server:", error);
+  }
+}
+
+startServer().catch(console.dir);
