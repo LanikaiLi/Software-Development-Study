@@ -12,6 +12,7 @@ To setup, run these commands below:
 10. create gitignore file with:
    'node_modules/*
    .env'
+11. add const express = require ("express") , const app = express(), app.use(express.json()) in server.js
 
 
 Tip: env file is kind of like config file, but different, config files are public shared within a team, package.json is more like a config file
