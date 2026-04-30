@@ -1,0 +1,5 @@
+$kind: http-request
+name: GET ALL POSTS
+url: ""
+method: GET
+order: 2213462259193271
