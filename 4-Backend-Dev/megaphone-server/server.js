@@ -1,3 +1,4 @@
+//setup express and mongodb
 require('dotenv').config();
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = process.env.MONGODB_URI;
@@ -26,6 +27,41 @@ async function connectToMongoDB() {
     throw error; // 让外层知道连库失败，不要继续 app.listen
   }
 }
+
+// global variables
+const db = client.db("megaphone");
+const postsCollection = db.collection("posts");
+
+// create a new post (inline async + try/catch is the usual style for simple routes)
+app.post("/posts", async (req, res) => {
+  try {
+    const { body, author } = req.body;
+    if (body == null || author == null) {
+      return res.status(400).json({ error: "body and author are required" });
+    }
+    const newPost = {
+      body,
+      author,
+      createdAt: new Date(),
+    };
+    const result = await postsCollection.insertOne(newPost);
+    res.status(201).json({ ...newPost, _id: result.insertedId });
+  } catch (error) {
+    console.error("Error creating post:", error);
+    res.status(500).json({ error: "Failed to create post" });
+  }
+});
+
+// read all posts
+app.get("/posts", async (req, res) => {
+  try {
+    const posts = await postsCollection.find().toArray();
+    res.json(posts);
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+    res.status(500).json({ error: "Failed to fetch posts" });
+  }
+});
 
 // connectToMongoDB().catch(console.dir);
 
@@ -69,3 +105,6 @@ startServer().catch(console.dir);
 // The frontend can look almost exactly like that one -- it doesn’t need to know about MongoDB or anything, it just needs to be able to make fetch requests. But remember you’re only going to be able to make a fetch request while your server is running.
 
 // I’d like to give you guys some independant space here to try experimenting with MongoDB, Express, and Node, so feel free to try other things you’re curious about! Feel free as well to reach out to each other to collaborate and help out with issues you might run into. We’re going to be using this stack for a while, so don’t feel bad if it’s still intimidating to get into it. You can reach out to me on Discord with issues, and if you think of any larger discussion questions we’ll have plenty of time to get into those during tomorrow’s session. Don't feel pressure to get something finished or working perfectly tonight, this can be a chance to experiment and see what works and what doesn't.
+
+
+
