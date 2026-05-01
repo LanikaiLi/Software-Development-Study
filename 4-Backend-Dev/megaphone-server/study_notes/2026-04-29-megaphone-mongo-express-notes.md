@@ -174,6 +174,41 @@ flowchart LR
 
 ---
 
+## 13. 何时 `throw`、何时只 `catch` / When to throw vs catch-only
+
+**核心想法 / Core idea:** 错误要交给**该做决定的那一层**处理。那一层在内层就 **rethrow**；在 HTTP 边界就 **用响应结束请求**。
+
+Errors should be handled at the **layer that must decide what happens next**: **rethrow** inside infrastructure when the parent must react; **finish the HTTP request** at the API boundary.
+
+---
+
+### 13.1 连库：`connectToMongoDB`（参考 [`SERVER.JS`](../SERVER.JS) 约 18–30 行）
+
+**中文：** 这里的「调用方」是 **`startServer`**。它要决定：**数据库没连上时还要不要 `app.listen`**。若 `catch` 里只打日志、不 **`throw`**，外层仍认为连接成功，可能带着坏状态启动 HTTP。**`throw error`** = 先在本层记日志，再把失败**往上交**，让启动流程停掉或走失败分支（你们用了 `process.exit(1)`）。
+
+**English:** The **caller** is **`startServer`**, which must decide whether to call **`app.listen`** if the DB connection failed. **`console.error` without `throw`** makes the outer `await` still succeed, so the server may start anyway. **`throw error`** means: log here, then **signal failure upward** so startup can abort (your code uses **`process.exit(1)`** on startup failure).
+
+---
+
+### 13.2 路由：`POST /posts`（约 36–53 行）
+
+**中文：** 这里的「对方」是 **HTTP 客户端**（Postman 等）。`catch` 的典型职责是：**把异常变成 HTTP 答案**（例如 `500` + `{ error: "..." }`），请求到此结束。除非你们配置了**全局错误中间件**专门接 `throw`/`next(err)`，否则在路由里再 `throw` 往往没有额外好处，还可能和「已经 `res.json`」冲突。
+
+**English:** The **consumer** is the **HTTP client**. In **`catch`**, the usual job is to **map the failure to an HTTP answer** (e.g. **`500`** + JSON body) and **end the request**. **No `throw` in the route `catch`** is normal unless you use **central error middleware** (`next(err)` pattern); otherwise you have already **delivered the error over HTTP**.
+
+---
+
+### 13.3 对照表 / Quick reference
+
+| 层次 / Layer | 典型做法 / Typical pattern |
+|--------------|-----------------------------|
+| 启动、连库、读配置 / Startup, DB connect, config | 打日志后 **`throw`**（或返回失败），让父级**中止启动** / Log, then **`throw`** (or return failure) so the parent **aborts startup**. |
+| HTTP 路由 / Route handlers | **`try` / `catch`** 里 **`res.status(...).json(...)`**，把错误**告诉客户端** / In **`catch`**, use **`res.status(...).json(...)`** to **tell the client** what went wrong. |
+
+**补充 / Note:** 不是教条「永远一边 throw 一边不 throw」；原则是 **谁在等结果、谁就要么收到错误要么收到 HTTP 响应，根据具体情况变通决定** / Not a rigid rule—**whoever waits for the outcome** should either **see the error propagate** (startup) or **get an HTTP response** (API).
+
+---
+
 ## 相关文件 / Related files
 
 - 入口与路由：[`../SERVER.JS`](../SERVER.JS)（若本地使用小写 `server.js`，在大小写不敏感的文件系统上可能是同一文件）。  
