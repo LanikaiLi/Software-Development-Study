@@ -108,3 +108,68 @@
 
     renderSkills('all');
 })();
+
+(function () {
+    var grid = document.querySelector('.hobby-grid');
+    var quoteEl = document.getElementById('lifeQuoteText');
+    var attrEl = document.getElementById('lifeQuoteAttr');
+
+    if (!grid || !quoteEl || !attrEl) {
+        return;
+    }
+
+    var LIFE_BLURBS = {
+        reading: {
+            text: 'One of my favorite quotes: I swear by my life and my love of it that I will never live for the sake of another man, nor ask another man to live for mine.',
+            attr: 'Atlas Shrugged'
+        },
+        'muay-thai': {
+            text: 'My favorite lesson learned from muay thai is that defensing sometimes is more important than attacking, especially when it comes to protect your own body.',
+            attr: 'On the mats'
+        },
+        ideas: {
+            text: 'Nothing beats the moment something that lived only in my head becomes real — a project shipped, a problem solved, an idea someone else can use.',
+            attr: 'Building in public'
+        },
+        travel: {
+            text: 'One thing I learned from and really like about traveling is inclusion, diversity, and acceptance for the people who are different from us.',
+            attr: 'Somewhere with a boarding pass'
+        }
+    };
+
+    function setQuote(key) {
+        var item = LIFE_BLURBS[key];
+        if (!item) {
+            return;
+        }
+        quoteEl.textContent = item.text;
+        if (item.attr) {
+            attrEl.textContent = '— ' + item.attr;
+            attrEl.removeAttribute('hidden');
+        } else {
+            attrEl.textContent = '';
+            attrEl.setAttribute('hidden', '');
+        }
+    }
+
+    function setSelected(activeBtn) {
+        var buttons = grid.querySelectorAll('.hobby-card');
+        for (var i = 0; i < buttons.length; i++) {
+            var pressed = buttons[i] === activeBtn;
+            buttons[i].setAttribute('aria-pressed', pressed ? 'true' : 'false');
+        }
+    }
+
+    grid.addEventListener('click', function (e) {
+        var btn = e.target.closest('.hobby-card');
+        if (!btn || !grid.contains(btn)) {
+            return;
+        }
+        var key = btn.getAttribute('data-hobby');
+        if (!key) {
+            return;
+        }
+        setSelected(btn);
+        setQuote(key);
+    });
+})();

@@ -95,28 +95,28 @@
         <section id="life">
             <div class="section-label">03 — Life</div>
             <h2>Off the screen</h2>
-            <div class="hobby-grid">
-                <div class="hobby-card">
+            <div class="hobby-grid" role="group" aria-label="Life topics — tap one to see a note below">
+                <button type="button" class="hobby-card" data-hobby="reading" aria-pressed="true">
                     <div class="hobby-icon"></div>
                     <div class="hobby-name">Reading & Learning</div>
-                </div>
-                <div class="hobby-card">
+                </button>
+                <button type="button" class="hobby-card" data-hobby="muay-thai" aria-pressed="false">
                     <div class="hobby-icon"></div>
                     <div class="hobby-name">MUAY THAI</div>
-                </div>
-                <div class="hobby-card">
+                </button>
+                <button type="button" class="hobby-card" data-hobby="ideas" aria-pressed="false">
                     <div class="hobby-icon"></div>
                     <div class="hobby-name">Turning all the ideas in my mind into reality</div>
-                </div>
-                <div class="hobby-card">
+                </button>
+                <button type="button" class="hobby-card" data-hobby="travel" aria-pressed="false">
                     <div class="hobby-icon"></div>
                     <div class="hobby-name">Traveling</div>
-                </div>
+                </button>
             </div>
 
-            <div class="quote-block">
-                <p>I swear by my life and my love of it that I will never live for the sake of another man, nor ask another man to live for mine.</p>
-                <div class="quote-attr">— Atlas Shrugged</div>
+            <div class="quote-block" aria-live="polite">
+                <p id="lifeQuoteText">One of my favorite quotes: I swear by my life and my love of it that I will never live for the sake of another man, nor ask another man to live for mine.</p>
+                <div id="lifeQuoteAttr" class="quote-attr">— Atlas Shrugged</div>
             </div>
         </section>
 
