@@ -1,6 +1,6 @@
-# Phoenix Li — personal site notes (vinyl player & JavaScript)
+# Phoenix Li — personal site notes (vinyl, skills, Life section, and JavaScript)
 
-This file saves what we learned while moving the music player script out of the HTML file and fixing touch behavior. The language is plain on purpose.
+This file saves what we learned while moving the music player script out of the HTML file, fixing touch behavior, and adding interactive **Life** hobby cards. The language is plain on purpose.
 
 ---
 
@@ -8,7 +8,7 @@ This file saves what we learned while moving the music player script out of the 
 
 - **`PhoenixLi.html`** — the page.
 - **`phoenixli.css`** — styles (including the vinyl look and the `.playing` state for the tonearm).
-- **`script.js`** — behavior: play/pause audio and toggle the “playing” look; **Skills** chips are built from the `SKILLS` array (name + category). Edit that array to add or re-label skills; filter buttons in the HTML use `data-category` values `all`, `build`, `data`, `cloud`, and `people`.
+- **`script.js`** — behavior: play/pause audio and toggle the “playing” look; **Skills** chips are built from the `SKILLS` array (name + category). Edit that array to add or re-label skills; filter buttons in the HTML use `data-category` values `all`, `build`, `data`, `cloud`, and `people`. The **Life** section hobby buttons swap quote text from a `LIFE_BLURBS` map (see §9).
 
 ---
 
@@ -186,6 +186,59 @@ or
 <!-- Just before </body> -->
 <script src="script.js"></script>
 ```
+
+---
+
+## 9. Life section: interactive hobby cards
+
+In **`#life`**, each hobby is a **`<button class="hobby-card">`** with a **`data-hobby`** key. Clicking one updates the paragraph **`#lifeQuoteText`** and the line **`#lifeQuoteAttr`** below the grid. One card stays visually “selected.” To change the copy, edit the **`LIFE_BLURBS`** object in **`script.js`** (no need to duplicate it here).
+
+### Why an IIFE wraps this block
+
+The Life logic lives inside **`(function () { … })();`** — an **immediately invoked function expression**. It runs **once** when **`script.js`** loads (with **`defer`**, after the DOM exists). Variables such as **`grid`**, **`LIFE_BLURBS`**, and the helper functions stay **inside** that function, so they do not become globals. **`script.js`** already uses separate IIFEs for the vinyl player and the skills filter; this third block is the same idea: one **sealed scope** per feature in a single file.
+
+### Guard clause
+
+If **`.hobby-grid`**, **`#lifeQuoteText`**, or **`#lifeQuoteAttr`** is missing, the code **`return`s** immediately. That avoids errors (for example calling **`addEventListener`** on **`null`**) if the HTML changes or the script is reused elsewhere.
+
+### `LIFE_BLURBS` and `setQuote`
+
+**`LIFE_BLURBS`** is a plain object: keys match **`data-hobby`** on each button (**`reading`**, **`muay-thai`**, etc.). Each entry has **`text`** and optional **`attr`**. **`setQuote(key)`** looks up the entry, sets **`quoteEl.textContent`**, and either shows **`— attribution`** or clears the attr node and sets the HTML **`hidden`** attribute when there is nothing to show. Using **`textContent`** keeps the update as plain text (safe and simple).
+
+### Click handler, **`e`**, and event delegation
+
+The listener is attached to **`grid`**, not to each button. That pattern is **event delegation**: one listener handles every card.
+
+When the user clicks, the browser calls your function with an **event object** — often named **`e`** or **`event`**. **`e.target`** is the **exact** node that received the click (sometimes a **child** inside the button, like the label). **`e.target.closest('.hobby-card')`** walks **up** the DOM until it finds the hobby **button**, so you always get the right element. **`grid.contains(btn)`** is a sanity check that the hit target really belongs to this grid. Then **`getAttribute('data-hobby')`** gives the key for **`LIFE_BLURBS`**.
+
+```mermaid
+flowchart LR
+  A[click on grid] --> B["e.target.closest('.hobby-card')"]
+  B --> C[get data-hobby key]
+  C --> D[setSelected]
+  C --> E[setQuote]
+```
+
+### `setSelected` vs `setQuote`
+
+- **`setQuote(key)`** only changes the **text** under the buttons.
+- **`setSelected(activeBtn)`** loops all **`.hobby-card`** nodes and sets **`aria-pressed`** to **`"true"`** on the clicked button and **`"false"`** on the others.
+
+So **`setQuote`** is enough if you only care about the sentence. **`setSelected`** exists so **one** control is clearly the **active choice**: for **CSS** (selected border/background) and for **accessibility** (**`aria-pressed`** tells assistive tech which option is pressed).
+
+### CSS: default look vs selected
+
+The **normal** card is styled by **`.hobby-card`** (border, transparent background, padding, button reset). **`.hobby-card:hover`** and **`.hobby-card:focus-visible`** add interaction feedback.
+
+The **selected** state is **`.hobby-card[aria-pressed="true"]`** — stronger border and a light pink background. There is **no** separate rule for **`aria-pressed="false"`**: those buttons simply **do not** match the **`true`** selector, so they keep the **base** **`.hobby-card`** styles.
+
+### `:focus-visible` and keyboard focus
+
+When you move through the page with **Tab**, the focused hobby button should be **visible**. **`:focus-visible`** applies a **focus ring** (outline) in that situation so keyboard users can see where they are. It is not the same as **`:hover`** (mouse only). Try **Tab** on the live page to see the pink outline on the focused card.
+
+### `aria-live="polite"` on the quote block
+
+The quote container uses **`aria-live="polite"`** so that when the paragraph text **changes**, screen readers can **announce** the update without interrupting the user mid-sentence.
 
 ---
 

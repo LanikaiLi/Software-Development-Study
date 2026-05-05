@@ -294,12 +294,29 @@ p + p {
     padding: 1.5rem;
     border: 1px solid rgba(240, 236, 230, 0.1);
     border-radius: 4px;
-    transition: border-color 0.3s, transform 0.3s;
+    transition: border-color 0.3s, transform 0.3s, background 0.3s;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .hobby-card:hover {
     border-color: rgba(232, 160, 191, 0.4);
     transform: translateY(-2px);
+}
+
+.hobby-card:focus-visible {
+    outline: 2px solid #e8a0bf;
+    outline-offset: 2px;
+}
+
+.hobby-card[aria-pressed="true"] {
+    border-color: #e8a0bf;
+    background: rgba(232, 160, 191, 0.08);
 }
 
 .hobby-card .hobby-icon {
