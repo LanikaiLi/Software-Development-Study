@@ -1,6 +1,6 @@
 //setup express and mongodb
 require('dotenv').config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = process.env.MONGODB_URI;
 const express = require('express');
 const app = express();
@@ -63,6 +63,13 @@ app.get("/posts", async (req, res) => {
   }
 });
 
+// delete a post
+app.delete("/posts/:id", async (req, res) => {
+  await db.collection("posts").deleteOne({
+      _id: new ObjectId(req.params.id)
+  })
+  res.end()
+})
 // connectToMongoDB().catch(console.dir);
 
 async function startServer() {
