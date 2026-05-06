@@ -6,6 +6,18 @@ const express = require('express');
 const app = express();
 app.use(express.json());
 
+app.use((req, res, next) => { // this is to allow the server to accept requests from other domains, so that the client can send a request to the server from another domain
+  res.set(`Access-Control-Allow-Origin`, `*`)
+
+  if (req.method === `OPTIONS`) {
+      res.set(`Access-Control-Allow-Methods`, `POST,PATCH,DELETE`)
+      res.set(`Access-Control-Allow-Headers`, `Content-Type`)
+      return res.sendStatus(204)
+  }
+
+  next()
+})
+
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
