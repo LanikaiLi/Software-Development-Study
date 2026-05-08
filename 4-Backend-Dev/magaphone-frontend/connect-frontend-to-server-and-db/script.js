@@ -1,6 +1,3 @@
-// 1. write a function that reads all the posts from the DB
-// 2. create a form that allows users to make a POST request and create a new post
-
 const form = document.getElementById("new-post-form")
 const baseURL = `http://localhost:3000`
 
@@ -23,12 +20,25 @@ const addPostsToPage = (posts) => {
         postBody.className = "post-body"
         const postMeta = document.createElement("p")
         postMeta.className = "post-meta"
+        const deleteButton = document.createElement("a")
+        deleteButton.className = "delete-button"
+        deleteButton.innerText = "❌"
 
         postBody.innerText = post.body
         postMeta.innerText = post.author
 
+        deleteButton.addEventListener("click", async () => {
+            await fetch(
+                `${baseURL}/posts/${post._id}`,
+                { method: "DELETE" }
+            )
+
+            getPosts()
+        })
+
         newListItem.appendChild(postBody)
         newListItem.appendChild(postMeta)
+        newListItem.appendChild(deleteButton)
 
         allPosts.appendChild(newListItem)
     })
