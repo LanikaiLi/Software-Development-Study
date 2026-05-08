@@ -59,8 +59,8 @@ form.addEventListener("submit", async (event) => {
                 author: form.elements.user.value
             })
         }
-    ).then((response) => {
-        return response.json()
+    ).then((response) => { // the response is the thing that fetch returns, it is a promise that resolves to the response object
+        return response.json() // parse the response as JSON
     })
 
     getPosts()
