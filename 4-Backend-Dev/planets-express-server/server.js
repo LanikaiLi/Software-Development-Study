@@ -9,7 +9,11 @@ app.get('/', (req, res) => {
 })
 
 app.get('/earth', (req, res) => {
-    res.send(`earth is the 3rd planet from the sun`)
+    res.json({
+        name: 'Earth',
+        description: 'The third planet from the sun',
+        isHabitable: true
+    })
 })
 
 app.listen(port, () => {
