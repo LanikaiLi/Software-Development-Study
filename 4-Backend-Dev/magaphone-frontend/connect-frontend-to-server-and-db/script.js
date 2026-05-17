@@ -1,5 +1,5 @@
 const form = document.getElementById("new-post-form")
-const baseURL = `http://localhost:3000`
+const baseURL = `https://software-development-study-2.onrender.com/`
 
 const getPosts = async () => {
     const response = await fetch(`${baseURL}/posts`)
