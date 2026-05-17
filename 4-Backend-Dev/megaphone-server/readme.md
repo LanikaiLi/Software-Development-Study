@@ -100,3 +100,66 @@ From this folder:
 - `node delete-all-posts.js` — delete all posts in `megaphone.posts`
 
 Run `npm install` here before using these scripts.
+
+## Troubleshooting Render deployment
+
+### `MongoServerSelectionError` with SSL/TLS errors
+
+**Problem:** Deploy fails when connecting to MongoDB with errors like:
+```
+tlsv1 alert internal error
+MongoServerSelectionError: 007DA34ED67D0000:error:0A000438:...
+```
+
+**Root cause:** Render's outbound IPs are not allowed in MongoDB Atlas Network Access.
+
+**Solution:**
+
+1. Open [MongoDB Atlas](https://cloud.mongodb.com) → your project → **Network Access**.
+2. **Add IP Access List Entry** Open [IP Access List in your project](https://cloud.mongodb.com/v2/69f143cce50085881245acc3#/security/network/accessList) and enter **`0.0.0.0/0`** (allow all IPs).
+3. Click **Confirm** and wait **1–2 minutes** for the change to propagate.
+4. On Render, **Manual Deploy → Clear build cache & deploy**.
+
+> **Security note:** `0.0.0.0/0` allows connections from any IP. For production, restrict to Render's specific egress IPs (available in Render documentation or support).
+
+### Connection string format issues
+
+**Problem:** SSL/connection errors even with the right IP whitelist.
+
+**Common mistakes:**
+- Spaces in the URI (especially around `@` or `/`)
+- Special characters in the password not URL-encoded
+- Missing `@` before the cluster hostname
+- Using a direct `mongodb://` instead of `mongodb+srv://` for Atlas
+
+**Solution:**
+1. Generate a fresh connection string from Atlas → **Connect** → **Drivers** → **Node.js**.
+2. Copy the **entire** connection string as one line.
+3. If your password has special characters (`@`, `#`, `%`, `/`, etc.), Atlas should auto-encode them, but if the string looks odd, consider setting a **temporary simple password** (letters + numbers only) for testing.
+4. Paste into Render → **Environment** → `MONGODB_URI`, exactly as provided.
+
+### `PORT` mismatch
+
+**Problem:** App runs but health checks fail; Render says the service is not responding.
+
+**Root cause:** App listens on hardcoded port (e.g., `3000`) but Render forwards traffic to a different port (e.g., `10000`).
+
+**Solution:** Ensure `server.js` uses:
+```js
+const port = process.env.PORT || 3000;
+app.listen(port, () => console.log(`Server listening on port ${port}`));
+```
+
+Render automatically sets `PORT` in the environment; your code just needs to read it.
+
+### `injected env (0) from .env` — Is this a problem?
+
+**No.** This message means dotenv found **zero variables** in a `.env` file on the server (normal — `.env` is gitignored). Render env vars (set in the dashboard) are injected separately and do not appear in this message. If `MONGODB_URI` is set in Render → **Environment** and shows up in a subsequent connection error, the env var is present; the issue is elsewhere (usually Atlas network access or URI format).
+
+### Deploy succeeds but service won't start
+
+Check Render → **Logs** for the full error output. Common causes:
+- `MONGODB_URI` missing or invalid (check **Environment** on the service)
+- MongoDB user credentials wrong (test locally with the same URI)
+- Atlas cluster is paused (wake it up in Atlas dashboard)
+- Node.js version incompatibility (try setting `NODE_VERSION=20.11.0` in **Environment** if using Node 24)
