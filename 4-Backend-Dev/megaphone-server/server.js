@@ -43,6 +43,7 @@ async function connectToMongoDB() {
 // global variables
 const db = client.db("megaphone");
 const postsCollection = db.collection("posts");
+const port = process.env.PORT || 3000;
 
 // create a new post (inline async + try/catch is the usual style for simple routes)
 app.post("/posts", async (req, res) => {
@@ -87,8 +88,8 @@ app.delete("/posts/:id", async (req, res) => {
 async function startServer() {
   try {
     await connectToMongoDB();
-    app.listen(3000, () => {
-      console.log("Server is running on port 3000");
+    app.listen(port, () => {
+      console.log(`Server listening on port ${port}`);
     });
   } catch (error) {
     console.error("Error starting server:", error);
