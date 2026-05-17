@@ -1,12 +1,19 @@
 const form = document.getElementById("new-post-form")
-const baseURL = `https://software-development-study-2.onrender.com/`
+// No trailing slash — `${baseURL}/posts` must not become ...com//posts
+const baseURL = "https://software-development-study-2.onrender.com"
 
 const getPosts = async () => {
-    const response = await fetch(`${baseURL}/posts`)
-    const posts = await response.json()
-
-    addPostsToPage(posts)
-    return posts
+    try {
+        const response = await fetch(`${baseURL}/posts`)
+        if (!response.ok) {
+            throw new Error(`GET /posts failed: ${response.status}`)
+        }
+        const posts = await response.json()
+        addPostsToPage(posts)
+        return posts
+    } catch (error) {
+        console.error("Could not load posts:", error)
+    }
 }
 
 const addPostsToPage = (posts) => {
@@ -49,19 +56,18 @@ getPosts()
 form.addEventListener("submit", async (event) => {
     event.preventDefault()
 
-    await fetch(
-        `${baseURL}/posts`,
-        {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                body: form.elements.body.value,
-                author: form.elements.user.value
-            })
-        }
-    ).then((response) => { // the response is the thing that fetch returns, it is a promise that resolves to the response object
-        return response.json() // parse the response as JSON
+    const response = await fetch(`${baseURL}/posts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            body: form.elements.body.value,
+            author: form.elements.user.value
+        })
     })
+    if (!response.ok) {
+        console.error("POST /posts failed:", response.status, await response.text())
+        return
+    }
 
     getPosts()
     form.reset()
