@@ -53,10 +53,16 @@ const addPostsToPage = (posts) => {
             numberOfUnits = Math.round(numberOfUnits / 24)
         }
 
-        deleteButton.innerText = "❌"
+        deleteButton.innerText = "🗑️"
+        
+        // Build the meta header: username and time posted
+        const authorSpan = document.createElement("strong")
+        authorSpan.innerText = post.author
+        postMeta.appendChild(authorSpan)
+        postMeta.appendChild(postTime)
+        
         postTime.innerText = `posted ${numberOfUnits} ${unitOfTime}${numberOfUnits !== 1 ? "s" : ""} ago.`
         postBody.innerText = post.body
-        postMeta.innerText = post.author
 
         deleteButton.addEventListener("click", async () => {
             await fetch(

@@ -87,29 +87,63 @@ button:hover {
 }
 
 .post {
-  padding: 16px 0;
-  border-top: 1px solid #cccccc;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
-.post-body,
+/* Post header: username and time posted side by side */
 .post-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 12px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.post-meta strong {
+  font-weight: 700;
+  color: #111111;
+  font-size: 0.95rem;
+}
+
+.post-time {
   margin: 0;
+  color: #8b8484;
+  font-size: 0.85rem;
 }
 
 .post-body {
-  font-size: 1.3em;
+  margin: 0 0 12px 0;
+  font-size: 1rem;
   line-height: 1.5;
   word-break: break-word;
-}
-
-.post-meta {
-  margin-top: 6px;
-  color: #8b8484;
+  color: #111111;
 }
 
 .delete-button {
-    cursor: pointer;
-    margin-top: 32px;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-button:hover {
+  background: #f0f0f0;
 }
 
 @media (max-width: 560px) {
