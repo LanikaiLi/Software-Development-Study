@@ -1,6 +1,7 @@
 const form = document.getElementById("new-post-form")
 // No trailing slash — `${baseURL}/posts` must not become ...com//posts
-const baseURL = "https://software-development-study-2.onrender.com"
+//const baseURL = "https://software-development-study-2.onrender.com"
+const baseURL = "http://localhost:3000"
 
 const getPosts = async () => {
     try {
@@ -25,12 +26,35 @@ const addPostsToPage = (posts) => {
         newListItem.className = "post"
         const postBody = document.createElement("p")
         postBody.className = "post-body"
-        const postMeta = document.createElement("p")
+        const postMeta = document.createElement("div")
         postMeta.className = "post-meta"
+        const postTime = document.createElement("p")
+        postTime.className = "post-time"
         const deleteButton = document.createElement("a")
         deleteButton.className = "delete-button"
-        deleteButton.innerText = "❌"
 
+        const timePosted = new Date(post.createdAt).getTime()
+        const secondsSincePosted =Math.round((Date.now() - timePosted) / 1000)
+        let unitOfTime = "second"
+        let numberOfUnits = secondsSincePosted
+
+        if (numberOfUnits >= 60) {
+            unitOfTime = "minute"
+            numberOfUnits = Math.round(numberOfUnits / 60)
+        }
+
+        if (numberOfUnits >= 60) {
+            unitOfTime = "hour"
+            numberOfUnits = Math.round(numberOfUnits / 60)
+        }
+
+        if (numberOfUnits >= 24) {
+            unitOfTime = "day"
+            numberOfUnits = Math.round(numberOfUnits / 24)
+        }
+
+        deleteButton.innerText = "❌"
+        postTime.innerText = `posted ${numberOfUnits} ${unitOfTime}${numberOfUnits !== 1 ? "s" : ""} ago.`
         postBody.innerText = post.body
         postMeta.innerText = post.author
 
@@ -46,6 +70,7 @@ const addPostsToPage = (posts) => {
         newListItem.appendChild(postBody)
         newListItem.appendChild(postMeta)
         newListItem.appendChild(deleteButton)
+        postMeta.appendChild(postTime)
 
         allPosts.appendChild(newListItem)
     })
