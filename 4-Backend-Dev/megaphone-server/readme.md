@@ -101,6 +101,98 @@ From this folder:
 
 Run `npm install` here before using these scripts.
 
+## 学习笔记：用 Express 提供 HTML 页面和静态文件
+
+### 场景
+
+除了 API（`/posts`、`/users`），还想在浏览器打开注册页：
+
+- `http://localhost:3000/newuser` → 显示 `newuser.html`
+
+`newuser.html` 里还引用了同文件夹里的文件：
+
+```html
+<link rel="stylesheet" href="style.css">
+<script defer src="create-user.js"></script>
+```
+
+### 为什么会报错？
+
+只写了这一条路由时：
+
+```js
+app.get("/newuser", (req, res) => {
+  res.sendFile("newuser.html", { root: frontendDir });
+});
+```
+
+这只能回答：「有人要 `/newuser` 时，给他 HTML 页面。」
+
+浏览器打开页面后，还会**自动**再去要：
+
+- `http://localhost:3000/style.css`
+- `http://localhost:3000/create-user.js`
+
+（相对路径 `style.css` 会解析成网站根路径下的 `/style.css`，不是 `/newuser/style.css`。）
+
+服务器没有为这两个地址准备文件 → **404**，有时返回 HTML 错误页 → 控制台出现：
+
+- `MIME type ('text/html') is not a supported stylesheet MIME type`
+- `Refused to execute script ... MIME type ('text/html')`
+
+意思是：浏览器要 CSS/JS，服务器却给了 HTML。
+
+### `express.static` 做什么？
+
+```js
+const frontendDir = path.join(__dirname, "../magaphone-frontend/connect-frontend-to-server-and-db");
+
+app.get("/newuser", (req, res) => {
+  res.sendFile("newuser.html", { root: frontendDir });
+});
+
+app.use(express.static(frontendDir));
+```
+
+**通俗理解：** 告诉 Express：「这个文件夹像一个文件柜，有人用网址里的文件名来要文件，就从柜子里拿出来发给他。」
+
+| 浏览器访问的网址 | Express 发出的文件 |
+|------------------|-------------------|
+| `/newuser` | 由上面的 `app.get` 专门返回 `newuser.html` |
+| `/style.css` | 文件夹里的 `style.css` |
+| `/create-user.js` | 文件夹里的 `create-user.js` |
+
+不用为每个 CSS、JS 单独写 `app.get("/style.css", ...)`。
+
+### `sendFile` 和 `path.join` 提醒
+
+- `sendFile` 的 `root` 要用 **`path.join(__dirname, "../magaphone-frontend/...")`**，不要写错成 `..4-Backend-Dev/...` 这类路径。
+- 前端文件夹名是 **`magaphone-frontend`**（拼写注意），不是 `megaphone-frontend`。
+
+### 和「直接打开 HTML 文件」的区别
+
+| 方式 | 地址栏 | 谁提供 HTML/CSS/JS |
+|------|--------|-------------------|
+| 双击 / `file://` 打开 | `file:///Users/.../newuser.html` | 浏览器读本地磁盘 |
+| 通过 Express 打开 | `http://localhost:3000/newuser` | **Node 服务器**按网址返回文件 |
+
+用第二种时，**必须**让服务器既能发 HTML，也能发页面依赖的 CSS、JS（`express.static`）。
+
+### 相关代码位置（`server.js`）
+
+```js
+const path = require("path");
+const frontendDir = path.join(__dirname, "../magaphone-frontend/connect-frontend-to-server-and-db");
+
+app.get("/newuser", (req, res) => {
+  res.sendFile("newuser.html", { root: frontendDir });
+});
+
+app.use(express.static(frontendDir));
+```
+
+改完记得**重启** `node server.js`，浏览器**硬刷新**（Cmd+Shift+R）再试。
+
 ## Troubleshooting Render deployment
 
 ### `MongoServerSelectionError` with SSL/TLS errors
