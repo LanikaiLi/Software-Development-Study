@@ -91,11 +91,11 @@ app.delete("/posts/:id", async (req, res) => {
 // connectToMongoDB().catch(console.dir);
 
 app.get("/newuser", (req, res) => {
-  res.sendFile("newuser.html", { root: frontendDir });
+  res.sendFile("newuser.html", { root: frontendDir }); //frontendDir is the directory of the frontend files
 });
 
 // Serve CSS/JS (browser requests /style.css, /create-user.js from /newuser page)
-app.use(express.static(frontendDir));
+app.use(express.static(frontendDir)); 
 
 app.post("/users", async (req, res) => {
   try {
