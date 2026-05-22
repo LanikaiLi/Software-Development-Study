@@ -1,0 +1,5 @@
+$kind: http-request
+name: POST A USER
+url: ""
+method: GET
+order: 3991528497464959

@@ -3,6 +3,10 @@ require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = process.env.MONGODB_URI;
 const express = require('express');
+const path = require('path');
+const crypto = require('crypto');
+const { promisify } = require('util');
+const pbkdf2 = promisify(crypto.pbkdf2);
 const app = express();
 app.use(express.json());
 
@@ -44,6 +48,7 @@ async function connectToMongoDB() {
 const db = client.db("megaphone");
 const postsCollection = db.collection("posts");
 const port = process.env.PORT || 3000;
+const frontendDir = path.join(__dirname, "../magaphone-frontend/connect-frontend-to-server-and-db");
 
 // create a new post (inline async + try/catch is the usual style for simple routes)
 app.post("/posts", async (req, res) => {
@@ -81,9 +86,42 @@ app.delete("/posts/:id", async (req, res) => {
   await db.collection("posts").deleteOne({
       _id: new ObjectId(req.params.id)
   })
-  res.end()
-})
+  res.end();
+});
 // connectToMongoDB().catch(console.dir);
+
+app.get("/newuser", (req, res) => {
+  res.sendFile("newuser.html", { root: frontendDir }); //frontendDir is the directory of the frontend files
+});
+
+// Serve CSS/JS (browser requests /style.css, /create-user.js from /newuser page)
+app.use(express.static(frontendDir)); 
+
+app.post("/users", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ message: "username and password are required" });
+    }
+
+    const salt = crypto.randomBytes(16);
+    const hashedPassword = await pbkdf2(password, salt, 310000, 32, "sha256");
+
+    const insertResult = await db.collection("users").insertOne({
+      username,
+      hashed_password: hashedPassword.toString("base64"),
+      salt: salt.toString("base64"),
+    });
+
+    return res.status(201).json({
+      _id: insertResult.insertedId,
+      username,
+    });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return res.status(500).json({ message: "Failed to create user." });
+  }
+});
 
 async function startServer() {
   try {
@@ -98,33 +136,4 @@ async function startServer() {
 }
 
 startServer().catch(console.dir);
-
-
-// CONTINUING WITH OUR MICROBLOG PROJECT:
-
-// Tomorrow we will do an exhaustive review of this example project, so I’d like you all to take some time today to try to advance it on your own. The stack for this project (“stack” means the combination of frameworks and languages used to run the application, both frontend and backend) is MongoDB, Express, and Node. We’re using Express for the server, MongoDB for the database, and Node to connect them together. For the frontend, we can use plain Javascript/HTML/CSS.
-
-// The goal is to create an application where you can do the following things in the database:
-// 1. Add a new “post” to the database (a post has a body, an author, and a time it was created).
-// 2. Read all posts from the database.
-// 3. Delete a post from the database.
-// 4. (And optionally, edit a post)
-
-// In the backend, you can do all of these with Postman. Once you have them working in Postman, you can try to get started on building a working frontend.
-
-// For building out the post and read routes, refer to this Github repo, which we covered together yesterday: https://github.com/j-goodman/megaphone-2-server/blob/main/server.js
-
-// Remember that that server imports a variable called MONGO_URI from .env. So your .env should look something like this:
-
-// `MONGO_URI=mongodb+srv://jgoodman_db_user:<password>@atlas-cluster-1.wfeql9r.mongodb.net/?appName=atlas-cluster-1`
-
-// To build out the delete route, refer to our Movie Watchlist Server here: https://github.com/j-goodman/movie-watchlist-server
-
-// To get started on the frontend, refer to this repo here: https://github.com/j-goodman/movie-watchlist-frontend
-
-// The frontend can look almost exactly like that one -- it doesn’t need to know about MongoDB or anything, it just needs to be able to make fetch requests. But remember you’re only going to be able to make a fetch request while your server is running.
-
-// I’d like to give you guys some independant space here to try experimenting with MongoDB, Express, and Node, so feel free to try other things you’re curious about! Feel free as well to reach out to each other to collaborate and help out with issues you might run into. We’re going to be using this stack for a while, so don’t feel bad if it’s still intimidating to get into it. You can reach out to me on Discord with issues, and if you think of any larger discussion questions we’ll have plenty of time to get into those during tomorrow’s session. Don't feel pressure to get something finished or working perfectly tonight, this can be a chance to experiment and see what works and what doesn't.
-
-
 
