@@ -48,6 +48,7 @@ async function connectToMongoDB() {
 const db = client.db("megaphone");
 const postsCollection = db.collection("posts");
 const port = process.env.PORT || 3000;
+const frontendDir = path.join(__dirname, "../magaphone-frontend/connect-frontend-to-server-and-db");
 
 // create a new post (inline async + try/catch is the usual style for simple routes)
 app.post("/posts", async (req, res) => {
@@ -90,10 +91,11 @@ app.delete("/posts/:id", async (req, res) => {
 // connectToMongoDB().catch(console.dir);
 
 app.get("/newuser", (req, res) => {
-  res.sendFile("newuser.html", {
-    root: path.join(__dirname, "../magaphone-frontend"),
-  });
+  res.sendFile("newuser.html", { root: frontendDir });
 });
+
+// Serve CSS/JS (browser requests /style.css, /create-user.js from /newuser page)
+app.use(express.static(frontendDir));
 
 app.post("/users", async (req, res) => {
   try {
