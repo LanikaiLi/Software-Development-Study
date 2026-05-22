@@ -3,6 +3,8 @@ require('dotenv').config();
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = process.env.MONGODB_URI;
 const express = require('express');
+const path = require('path');
+const crypto = require('crypto');
 const app = express();
 app.use(express.json());
 
@@ -84,6 +86,36 @@ app.delete("/posts/:id", async (req, res) => {
   res.end()
 })
 // connectToMongoDB().catch(console.dir);
+
+app.get("/newuser", (req, res) => {
+  res.sendFile("newuser.html", {
+    root: path.join(__dirname, "../magaphone-frontend"),
+  });
+})
+
+app.post("/users", async (req, res) => {
+  const username = req.body.username
+  const password = req.body.password
+
+  const salt = crypto.randomBytes(16)
+
+  crypto.pbkdf2(password, salt, 310000, 32, "sha256", async (err, hashedPassword) => {
+      if (err) {
+          return res.status(500).json({"message": "Failed to hash password."})
+      }
+
+      const insertResult = await db.collection("users").insertOne({
+          username: username,
+          hashed_password: hashedPassword.toString("base64"),
+          salt: salt.toString("base64")
+      })
+
+      return res.status(201).json({
+          _id: insertResult.insertId,
+          username: username
+      })
+  })
+})
 
 async function startServer() {
   try {
