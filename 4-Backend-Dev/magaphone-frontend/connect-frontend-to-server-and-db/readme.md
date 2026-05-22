@@ -62,3 +62,20 @@
 
 - 若控制台是 **CORS** 相关报错，与本次 **400** 不同：400 表示请求已到达服务器，但服务器认为参数不合法。
 - 表单提交处理里使用 **`event.preventDefault()`**，可避免默认整页刷新（否则有时会看到地址栏带上查询参数等意外行为）。
+
+---
+
+## 通过服务器打开 `newuser.html`（`express.static`）
+
+注册页 `newuser.html` 可以通过后端访问：`http://localhost:3000/newuser`（需先启动 `megaphone-server`）。
+
+若只配置了「返回 HTML」、没有配置静态文件，浏览器控制台会报：
+
+- `style.css` / `create-user.js` 的 **MIME type** 错误（实际收到的是 HTML）
+- **404** 找不到 JS 文件
+
+**原因：** 页面里的 `<link href="style.css">` 会让浏览器去请求 `http://localhost:3000/style.css`，服务器必须能把这个文件发出来，不能只处理 `/newuser` 这一条路由。
+
+**解决办法（在后端 `megaphone-server/server.js`）：** 使用 `express.static(frontendDir)`，把整个前端文件夹「挂」到服务器上。详细说明见 **`megaphone-server/readme.md`** 里的「学习笔记：用 Express 提供 HTML 页面和静态文件」一节。
+
+**本地测试 `create-user.js`：** `baseURL` 需指向正在运行的 API，例如 `http://localhost:3000`（不要末尾加 `/`，避免 `//users` 双斜杠）。
