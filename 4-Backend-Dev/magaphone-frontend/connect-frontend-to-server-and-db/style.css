@@ -117,6 +117,37 @@ button:hover {
   text-decoration: underline;
 }
 
+.user-posts-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.user-posts-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+#all-posts .cancel-button {
+  width: auto;
+  min-width: unset;
+  min-height: unset;
+  padding: 4px 10px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 1.25rem;
+  line-height: 1;
+  grid-column: unset;
+}
+
+#all-posts .cancel-button:hover {
+  background: #f0f0f0;
+}
+
 .post-time {
   margin: 0;
   color: #8b8484;
