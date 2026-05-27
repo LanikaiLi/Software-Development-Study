@@ -106,10 +106,15 @@ button:hover {
   border-bottom: 1px solid #f0f0f0;
 }
 
-.post-meta strong {
+.post-meta .author-name {
   font-weight: 700;
-  color: #111111;
   font-size: 0.95rem;
+  color: #111111;
+  cursor: pointer;
+}
+
+.post-meta .author-name:hover {
+  text-decoration: underline;
 }
 
 .post-time {
