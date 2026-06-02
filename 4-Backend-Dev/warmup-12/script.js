@@ -16,4 +16,7 @@ nameForm.addEventListener("submit", (event) => {
     const name = document.getElementById("name").value
     const favoriteColor = document.getElementById("favorite-color").value
     console.log(name)
+    console.log(event.target[0].value) // this is another way to get the input value from the event, it is more general and flexible than the previous way.
+
+    document.body.style.backgroundColor = favoriteColor
 })
