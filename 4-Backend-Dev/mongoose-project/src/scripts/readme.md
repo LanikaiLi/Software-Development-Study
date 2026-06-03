@@ -1,0 +1,1 @@
+this folder contains some script to run for example add seed data to the database, nothing related to the users, just developer tools

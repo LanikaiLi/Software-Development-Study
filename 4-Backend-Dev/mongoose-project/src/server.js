@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const app = express();
 const connectDB = require('./config/db');
+const employeeRoutes = require('./routes/employees');
 
 connectDB();
 
@@ -11,7 +12,7 @@ app.get("/", (req, res) => {
     res.json({message: "Employee Management System"});
 });
 
-//app.use('/employees', employeeRoutes); // for any route that starts with /employees, use the employeeRoutes middleware
+app.use('/employees', employeeRoutes); // for any route that starts with /employees, use the employeeRoutes middleware
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {

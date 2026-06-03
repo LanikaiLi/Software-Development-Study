@@ -1,0 +1,130 @@
+[
+	{
+		"firstName": "Anne",
+		"lastName": "Boleyn",
+		"availability": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+		"certifications": ["cpr", "fire safety"],
+		"email": "aboleyn@abcd.com",
+		"phone": "555-1842",
+		"dateJoined": 1720742400000
+	},
+	{
+		"firstName": "Ivan",
+		"lastName": "Vasilyevich",
+		"availability": ["monday", "tuesday", "wednesday", "thursday"],
+		"certifications": ["welding"],
+		"email": "ivasilyevich@abcd.com",
+		"dateJoined": 1712534400000
+	},
+	{
+		"firstName": "Marie",
+		"lastName": "Curie",
+		"availability": ["tuesday", "wednesday", "thursday", "friday"],
+		"certifications": ["hazmat", "commercial driving"],
+		"email": "mcurie@abcd.com",
+		"phone": "555-7391",
+		"dateJoined": 1743897600000
+	},
+	{
+		"firstName": "Ferdinand",
+		"lastName": "Magellan",
+		"availability": ["monday", "wednesday", "thursday", "friday", "saturday"],
+		"certifications": [],
+		"email": "fmagellan@abcd.com",
+		"phone": "555-2204",
+		"dateJoined": 1731024000000
+	},
+	{
+		"firstName": "Jacques",
+		"lastName": "Cousteau",
+		"availability": ["monday", "wednesday", "thursday", "friday"],
+		"certifications": ["fork lift", "cpr", "fire safety"],
+		"email": "jcousteau@abcd.com",
+		"dateJoined": 1707091200000
+	},
+	{
+		"firstName": "Amelia",
+		"lastName": "Earhart",
+		"availability": ["monday", "tuesday", "wednesday", "friday", "sunday"],
+		"certifications": ["cybersecurity", "cpr"],
+		"email": "aearhart@abcd.com",
+		"phone": "555-6117",
+		"dateJoined": 1749945600000
+	},
+	{
+		"firstName": "Su",
+		"lastName": "Song",
+		"availability": ["monday", "tuesday", "wednesday", "thursday", "friday"],
+		"certifications": ["fork lift"],
+		"email": "ssong@abcd.com",
+		"dateJoined": 1725667200000
+	},
+	{
+		"firstName": "Antonio",
+		"lastName": "Santa Anna",
+		"availability": ["monday", "tuesday", "thursday", "friday"],
+		"certifications": ["commercial driving", "hazmat"],
+		"email": "asantaanna@abcd.com",
+		"phone": "555-4089",
+		"dateJoined": 1718496000000
+	},
+	{
+		"firstName": "Toussaint",
+		"lastName": "Charbonneau",
+		"availability": ["monday", "wednesday", "thursday", "friday", "saturday"],
+		"certifications": ["fire safety"],
+		"email": "tcharbonneau@abcd.com",
+		"dateJoined": 1753315200000
+	},
+	{
+		"firstName": "Genghis",
+		"lastName": "Khan",
+		"availability": ["tuesday", "wednesday", "thursday", "friday", "sunday"],
+		"certifications": ["cpr", "cybersecurity", "welding"],
+		"email": "gkhan@abcd.com",
+		"phone": "555-9625",
+		"dateJoined": 1737590400000
+	},
+	{
+		"firstName": "Ada",
+		"lastName": "Lovelace",
+		"availability": ["monday", "tuesday", "wednesday", "thursday"],
+		"certifications": ["hazmat"],
+		"email": "alovelace@abcd.com",
+		"dateJoined": 1740096000000
+	},
+	{
+		"firstName": "Frida",
+		"lastName": "Kahlo",
+		"availability": ["monday", "tuesday", "wednesday", "friday"],
+		"certifications": ["fork lift", "fire safety"],
+		"email": "fkahlo@abcd.com",
+		"phone": "555-3350",
+		"dateJoined": 1714521600000
+	},
+	{
+		"firstName": "Tupac",
+		"lastName": "Amaru",
+		"availability": ["monday", "tuesday", "thursday", "friday"],
+		"certifications": ["commercial driving", "cpr"],
+		"email": "tamaru@abcd.com",
+		"dateJoined": 1750723200000
+	},
+	{
+		"firstName": "Guy",
+		"lastName": "Fawkes",
+		"availability": ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday"],
+		"certifications": [],
+		"email": "gfawkes@abcd.com",
+		"phone": "555-5874",
+		"dateJoined": 1722470400000
+	},
+	{
+		"firstName": "Vlad",
+		"lastName": "Dracula",
+		"availability": ["tuesday", "wednesday", "thursday", "friday"],
+		"certifications": ["welding", "hazmat"],
+		"email": "vdracula@abcd.com",
+		"dateJoined": 1733702400000
+	}
+]
