@@ -36,3 +36,13 @@ const employeeSchema = new mongoose.Schema({
 })
 
 module.exports = mongoose.model('Employee', employeeSchema); // this is to export the model so we can use it in other files
+
+const exampleEmployee = {
+    "firstName": "John",
+    "lastName": "Doe",
+    "availability": ["mon", "tue", "fri"],
+    "certifications": ["cert1", "cert2"],
+    "email": "john.doe@example.com",
+    "phone": "1234567890",
+    "dateJoined": "2026-01-01"
+}
