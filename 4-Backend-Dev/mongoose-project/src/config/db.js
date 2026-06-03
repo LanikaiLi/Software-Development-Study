@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+
+// this is a file to store helper functions that are used to connect to the database
 const connectDB = async () => {
     try {
         await mongoose.connect(process.env.MONGODB_URI);
