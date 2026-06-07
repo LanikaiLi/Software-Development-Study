@@ -1,0 +1,18 @@
+{
+  "name": "note_taking_app",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "phoenix",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon src/server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.107.0",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
