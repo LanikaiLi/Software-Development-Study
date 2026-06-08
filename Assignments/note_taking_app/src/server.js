@@ -7,6 +7,7 @@ require('dotenv').config()
 const express = require('express');
 const app = express();
 app.use(express.json())
+app.use(express.static('public')) // this is to serve the static files like the index.html file, the css file, the js file, etc.
 
 app.get('/', (req, res) => {
   res.send('服务器运行成功！');

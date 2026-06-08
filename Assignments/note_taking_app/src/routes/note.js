@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { supabase, pool } = require('../db')
+const supabase = require('../db')
 const requireAuth = require('../middleware/auth') 
 const { updateSearchIndex } = require('../../../../4-Backend-Dev/mongoose-project/src/models/EmployeeObject')
 
