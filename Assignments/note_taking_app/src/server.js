@@ -14,9 +14,12 @@ app.get('/', (req, res) => {
 
 // import the routes
 const authRoutes = require ('./routes/auth') // . means the same directory, which is src
+const noteRoutes = require ('./routes/note')
 
 // use the routes
 app.use('/auth', authRoutes)
+app.use('/note', noteRoutes)
+
 
 app.listen(3001, () => {
   console.log('Server is running on port 3001');
