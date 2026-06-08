@@ -31,6 +31,37 @@ router.post('/user/register', async(req, res) => {
     return res.status(201).json({message: 'User registered successfully'})
 })
 
+// ------------------------------------------------------------
+// 2. login a user
+// ------------------------------------------------------------
+
+router.post('/user/login', async(req, res) => {
+    const username = req.body.username
+    const password = req.body.password
+    let token = null
+
+    const {data, error} = await supabase
+    .from('users')
+    .select('*')
+    .eq('username', username) 
+    .single() // single() is used to get a single row from the database, if there are multiple rows, it will return an error
+
+    if (!data) {
+        return res.status(401).json({ error: 'Invalid username or password' })
+    }
+    
+    const valid = await bcrypt.compare(password, data.password_hash)
+    if (!valid) {
+        return res.status(401).json({ error: 'Invalid password' })
+    }else {
+            token = jwt.sign(
+            { userId: data.id },
+            process.env.JWT_SECRET,
+            { expiresIn: '5d' }
+        )
+    }
+    return res.status(200).json({ message: 'User logged in successfully', token: token })
+})
 
 // ------------------------------------------------------------
 // export the router
