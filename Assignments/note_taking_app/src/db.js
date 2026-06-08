@@ -13,6 +13,22 @@ const supabase = createClient(
     process.env.SUPABASE_KEY
   )
 
+// connect to postgres database directly
+const { Pool } = require('pg')
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL
+})
+
+pool.on('connect', () => {
+    console.log('Connected to PostgreSQL database')
+})
+
+pool.on('error', (err) => {
+    console.error('Error connecting to PostgreSQL database:', err)
+})
+
+module.exports = pool
+
 // ------------------------------------------------------------
 // 2. test the client connection
 // ------------------------------------------------------------
@@ -33,4 +49,4 @@ const supabase = createClient(
 // ------------------------------------------------------------
 // 3. export the supabase client
 // ------------------------------------------------------------
-module.exports = supabase
+module.exports = { supabase, pool }
