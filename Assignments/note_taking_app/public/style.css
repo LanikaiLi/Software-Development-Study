@@ -1,0 +1,155 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  color: #111;
+  background: #fff;
+}
+
+input,
+textarea,
+button {
+  font: inherit;
+}
+
+#auth-page {
+  max-width: 360px;
+  margin: 80px auto;
+  padding: 0 16px;
+}
+
+#auth-page h1 {
+  margin: 0 0 16px;
+}
+
+#auth-page input {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+}
+
+#auth-error {
+  color: #c00;
+  min-height: 1.2em;
+}
+
+#notes-page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+#main {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+#sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid #e0e0e0;
+  padding: 12px;
+  gap: 8px;
+}
+
+#search-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+}
+
+#btn-new-note {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  cursor: pointer;
+}
+
+#notes-list {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.note-item {
+  padding: 10px 12px;
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #fff;
+}
+
+.note-item:hover {
+  background: #f5f5f5;
+}
+
+.note-item.active {
+  background: #eef4ff;
+  border-color: #aac4ff;
+}
+
+#notes-list:empty::before {
+  content: 'No notes yet.';
+  display: block;
+  padding: 12px 0;
+  color: #888;
+}
+
+#editor {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 12px;
+  min-width: 0;
+}
+
+#note-title {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+#note-body {
+  flex: 1;
+  width: 100%;
+  min-height: 200px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  resize: none;
+  line-height: 1.5;
+}
+
+#editor .actions {
+  display: flex;
+  gap: 8px;
+}
+
+#btn-save,
+#btn-delete {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  background: #f8f8f8;
+  cursor: pointer;
+}

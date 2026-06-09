@@ -35,7 +35,7 @@ function showAuthPage() {
 }
 
 // ------------------------------------------------------------
-// 4. 用户行为1: 注册
+// 4. 登陆页面用户行为1: 注册
 // 用户点击register button时，摘取usernameInput和passwordInput的值，然后发送请求到backend的这个api route：/auth/user/register
 // ------------------------------------------------------------
 document.getElementById('btn-register').onclick = async () => {
@@ -59,7 +59,7 @@ document.getElementById('btn-register').onclick = async () => {
 }
 
 // ------------------------------------------------------------
-// 5. 用户行为2: 登录
+// 5. 登陆页面用户行为2: 登录
 // 用户点击sign in button时，摘取usernameInput和passwordInput的值，然后发送请求到backend的这个api route：/auth/user/login
 // 如果成功，则将token存起来并展示notes page （存起来是因为之后在notes 相关的所有routes都要带上这个token才能确保每个用户只能看到他们自己的notes）
 // 如果不成功，则显示错误信息和对用户的建议，比如：
@@ -91,11 +91,80 @@ document.getElementById('btn-login').onclick = async () => {
 }
 
 // ------------------------------------------------------------
-// 6. 用户行为3:登出
+// 6. notes页面用户行为3:登出
 // 用户点击sign out button时，将token清空并展示auth page， 将token清空是因为后续不需要这个token了，我们也需要用token = null的方式来标注当前没有登录的状态，我们用token来标注登陆的session
 // ------------------------------------------------------------
 document.getElementById('btn-logout').onclick = () => {
   token = null
-  currentNoteId = null
+  clearEditor()
+  notesList.innerHTML = ''
   showAuthPage()
+}
+
+// ------------------------------------------------------------
+// 7. notes页面用户行为4: 加载所有 notes
+// 页面切换到 notes page 时自动调用，因为页面切换到 notes page 时，我们需要为用户展示他现在有的所有笔记
+// 从后端拿到当前用户的所有 notes，渲染到左边列表
+// ------------------------------------------------------------
+async function loadNotes() {
+  const res = await fetch(`${baseURL}/note/get`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    console.error(data.error)
+    return
+  }
+
+  const notes = data.notes ?? []
+  renderNotesList(notes)
+
+  // 像 magaphone 加载 posts 后立刻展示内容一样，有 note 时自动选中第一条
+  if (notes.length > 0) {
+    selectNote(notes[0])
+  } else {
+    clearEditor()
+  }
+}
+
+// ------------------------------------------------------------
+// 8. 渲染 notes 列表
+// 把 notes 数组渲染成左边列表里的一条条 note
+// ------------------------------------------------------------
+function renderNotesList(notes) {
+  notesList.innerHTML = ''  // 先清空，因为之前可能有其他的note，我们需要先清空， 不然每次call这个function会无限append下去
+
+  notes.forEach(note => {
+    const item = document.createElement('div')
+    item.className = 'note-item'
+    item.dataset.noteId = note.id
+    item.textContent = note.title || 'Untitled'
+
+    // 用户点击某条 note → 右边显示内容
+    item.onclick = () => selectNote(note)
+
+    notesList.appendChild(item)
+  })
+}
+
+// ------------------------------------------------------------
+// 9. 选中某条 note
+// 用户点击左边列表某条 note 时，右边显示它的内容
+// ------------------------------------------------------------
+function selectNote(note) {
+  currentNoteId = note.id
+  noteTitle.value = note.title || ''
+  noteBody.value = note.body || ''
+
+  notesList.querySelectorAll('.note-item').forEach(item => {
+    item.classList.toggle('active', item.dataset.noteId === note.id)
+  })
+}
+
+function clearEditor() {
+  currentNoteId = null
+  noteTitle.value = ''
+  noteBody.value = ''
 }
