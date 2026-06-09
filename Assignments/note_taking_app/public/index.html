@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notes</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+
+  <!-- 登录/注册页面 -->
+  <div id="auth-page">
+    <h1>Notes</h1>
+
+    <input id="username" type="text" placeholder="Username" />
+    <input id="password" type="password" placeholder="Password" />
+
+    <div>
+      <button id="btn-login">Sign in</button>
+      <button id="btn-register">Register</button>
+    </div>
+
+    <p id="auth-error"></p>
+  </div>
+
+  <!-- Notes 页面（登录后显示）-->
+  <div id="notes-page" style="display:none">
+
+    <!-- 顶部栏 -->
+    <div id="topbar">
+      <span>Notes</span>
+      <button id="btn-logout">Sign out</button>
+    </div>
+
+    <!-- 主体 -->
+    <div id="main">
+
+      <!-- 左边：note 列表 + 搜索 + 新建 -->
+      <div id="sidebar">
+        <input id="search-input" type="text" placeholder="Search..." />
+        <button id="btn-new-note">+ New note</button>
+        <div id="notes-list"></div>
+      </div>
+
+      <!-- 右边：编辑区 -->
+      <div id="editor">
+        <input id="note-title" type="text" placeholder="Title" />
+        <textarea id="note-body" placeholder="Write something..."></textarea>
+        <button id="btn-save">Save</button>
+        <button id="btn-delete">Delete</button>
+      </div>
+
+    </div>
+  </div>
+
+</body>
+</html>

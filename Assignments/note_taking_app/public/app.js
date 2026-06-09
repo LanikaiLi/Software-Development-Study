@@ -1,0 +1,101 @@
+// ------------------------------------------------------------
+// 1. State — 记录当前状态
+// ------------------------------------------------------------
+let token = null        // 存登录后拿到的 JWT token
+let currentNoteId = null  // 存当前选中的 note id
+
+// No trailing slash — `${baseURL}/auth/...` must not become ...com//auth/...
+// const baseURL = "https://your-notes-api.onrender.com"
+const baseURL = "http://localhost:3001"
+
+// ------------------------------------------------------------
+// 2. 拿到页面上所有需要用的元素
+// ------------------------------------------------------------
+const authPage = document.getElementById('auth-page')
+const notesPage = document.getElementById('notes-page')
+const usernameInput = document.getElementById('username')
+const passwordInput = document.getElementById('password')
+const authError = document.getElementById('auth-error')
+const notesList = document.getElementById('notes-list')
+const noteTitle = document.getElementById('note-title')
+const noteBody = document.getElementById('note-body')
+const searchInput = document.getElementById('search-input')
+
+// ------------------------------------------------------------
+// 3. 页面切换
+// ------------------------------------------------------------
+function showNotesPage() {
+  authPage.style.display = 'none' // none means to hide the element
+  notesPage.style.display = 'block' // block means to display the element
+}
+
+function showAuthPage() {
+  authPage.style.display = 'block'
+  notesPage.style.display = 'none'
+}
+
+// ------------------------------------------------------------
+// 4. 用户行为1: 注册
+// 用户点击register button时，摘取usernameInput和passwordInput的值，然后发送请求到backend的这个api route：/auth/user/register
+// ------------------------------------------------------------
+document.getElementById('btn-register').onclick = async () => {
+  const username = usernameInput.value
+  const password = passwordInput.value
+
+  const res = await fetch(`${baseURL}/auth/user/register`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password }) // JSON.stringify is used to convert the username and password object into a JSON string
+  })
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    authError.textContent = data.error
+    return
+  }
+
+  authError.textContent = 'Registered! Please sign in.'
+}
+
+// ------------------------------------------------------------
+// 5. 用户行为2: 登录
+// 用户点击sign in button时，摘取usernameInput和passwordInput的值，然后发送请求到backend的这个api route：/auth/user/login
+// 如果成功，则将token存起来并展示notes page （存起来是因为之后在notes 相关的所有routes都要带上这个token才能确保每个用户只能看到他们自己的notes）
+// 如果不成功，则显示错误信息和对用户的建议，比如：
+// - 如果用户名不存在，则显示："User not found. Please register first."
+// - 如果密码错误，则显示："Invalid password. Please try again."
+// - 如果用户名和密码都错误，则显示："Invalid username or password. Please try again."
+// - 如果用户名和密码都正确，则将token存起来并展示notes page
+// ------------------------------------------------------------
+document.getElementById('btn-login').onclick = async () => {
+  const username = usernameInput.value
+  const password = passwordInput.value
+
+  const res = await fetch(`${baseURL}/auth/user/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, password })
+  })
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    authError.textContent = data.error
+    return
+  }
+
+  token = data.token  // 存起来，之后每次请求都要带
+  showNotesPage()
+  loadNotes()
+}
+
+// ------------------------------------------------------------
+// 6. 用户行为3:登出
+// 用户点击sign out button时，将token清空并展示auth page， 将token清空是因为后续不需要这个token了，我们也需要用token = null的方式来标注当前没有登录的状态，我们用token来标注登陆的session
+// ------------------------------------------------------------
+document.getElementById('btn-logout').onclick = () => {
+  token = null
+  currentNoteId = null
+  showAuthPage()
+}
