@@ -118,7 +118,7 @@ async function loadNotes() {
     return
   }
 
-  const notes = data.notes ?? []
+  const notes = data.notes ?? [] // ？？ means if the data.notes is null, then use an empty array
   renderNotesList(notes)
 
   // 像 magaphone 加载 posts 后立刻展示内容一样，有 note 时自动选中第一条
@@ -130,7 +130,7 @@ async function loadNotes() {
 }
 
 // ------------------------------------------------------------
-// 8. 渲染 notes 列表
+// 8. note页面机器行为 - 渲染 左侧notes 列表
 // 把 notes 数组渲染成左边列表里的一条条 note
 // ------------------------------------------------------------
 function renderNotesList(notes) {
@@ -150,7 +150,7 @@ function renderNotesList(notes) {
 }
 
 // ------------------------------------------------------------
-// 9. 选中某条 note
+// 9. note页面用户行为：选中某条 note
 // 用户点击左边列表某条 note 时，右边显示它的内容
 // ------------------------------------------------------------
 function selectNote(note) {
@@ -163,8 +163,134 @@ function selectNote(note) {
   })
 }
 
-function clearEditor() {
+function clearEditor() { 
   currentNoteId = null
   noteTitle.value = ''
   noteBody.value = ''
 }
+
+// ------------------------------------------------------------
+// 10. note页面用户行为：创建新 note
+// 用户点击new note button时，创建一个新 blank note，并渲染到左边列表
+// 创建新笔记其实 = 创建一个title为Untitled，body为空的note，然后再更新笔记的title和body为用户的输入
+// ------------------------------------------------------------
+document.getElementById('btn-new-note').onclick = async () => {
+  const res = await fetch(`${baseURL}/note/create`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({ title: 'Untitled', body: '' })
+  })
+
+  const data = await res.json()
+  //console.log(data)
+
+  if (!res.ok) {
+    console.error(data.error)
+    return
+  }
+
+  // 后端 Supabase insert().select() 返回的是数组，不是单个对象
+  const note = data.note[0] // data.note is an array, so we need to get the first element
+  await loadNotes()
+  selectNote(note)
+}
+
+// ------------------------------------------------------------
+// 11. note页面用户行为：更新 note
+// 用户点击save button时，发送请求到 PATCH /note/:id，更新 note 的 title 和 body
+// 然后重新加载 notes 列表，并选中更新后的 note
+// ------------------------------------------------------------
+document.getElementById('btn-save').onclick = async () => {
+  if (!currentNoteId) return // if no note is selected, do nothing
+
+  const res = await fetch(`${baseURL}/note/${currentNoteId}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({ title: noteTitle.value, body: noteBody.value })
+  })
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    console.error(data.error)
+    return
+  }
+
+  const note = data.note[0]
+  await loadNotes()
+  selectNote(note)
+}
+
+// ------------------------------------------------------------
+// 12. note页面用户行为：删除 note
+// 用户点击delete button时，发送请求到 DELETE /note/:id，删除 note
+// 然后重新加载notes列表，并选中更新后的note
+// ------------------------------------------------------------
+document.getElementById('btn-delete').onclick = async () => {
+  if (!currentNoteId) return
+
+  const res = await fetch(`${baseURL}/note/delete/${currentNoteId}`, {
+    method: 'DELETE',
+    headers: {
+        Authorization: `Bearer ${token}`
+      }
+  })
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    console.error(data.error)
+    return
+  }
+
+  await loadNotes()
+}
+
+// ------------------------------------------------------------
+// 13. note页面用户行为：搜索 note
+// 用户在 search 输入框里打字，按 Enter 键触发搜索（不是 button click）
+// 后端 route: GET /note/search?query_text=...
+// ------------------------------------------------------------
+async function searchNotes() {
+  const query = searchInput.value.trim()
+
+  // 空关键词 = 显示全部 notes
+  if (!query) {
+    await loadNotes()
+    return //here after return, the entire function will stop executing, so the api call below will not be made
+  }
+
+  const res = await fetch(
+    `${baseURL}/note/search?query_text=${encodeURIComponent(query)}`,
+    { headers: { Authorization: `Bearer ${token}` } }
+  )
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    console.error(data.error)
+    return
+  }
+
+  const notes = data.notes ?? []
+  renderNotesList(notes)
+
+  if (notes.length > 0) {
+    selectNote(notes[0])
+  } else {
+    clearEditor()
+  }
+}
+
+// onclick 是「点击」；keydown 是「键盘按下」——用 event.key 判断按了哪个键
+searchInput.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter') return
+
+  searchNotes()
+})
