@@ -56,6 +56,7 @@ router.get('/multiple/certifications', async(req, res) => {
 })
 
 //5. Find employees with some certifications who are available on specific days
+// example url: http://localhost:3000/employees/multiple/certifications?list=fork%20lift&availability=monday
 router.get('/availability/and/certifications', async(req, res) => {
 	//console.log(req.query.certs)
 	const certs = req.query.certs.split(',')
@@ -72,6 +73,15 @@ router.get('/availability/and/certifications/and/months', async(req, res) => {
 	const months = req.query.months
 	//console.log(new Date(Date.now() - months * 30 * 24 * 60 * 60 * 1000))
 	const employees = await Employee.find({certifications: {$all: certs}, availability: {$all: days}, dateJoined: {$lte: new Date(Date.now() - months * 30 * 24 * 60 * 60 * 1000)}}) // $gt is greater than, $lt is less than, $gte is greater than or equal to, $lte is less than or equal to
+	res.json(employees)
+})
+
+//7. Find employees who has phone number available
+router.get('/phone/available', async(req, res) => {
+	const employees = await Employee.find(
+		{phone: {$exists: true}}
+	)
+	if (!employees) return res.status(404).json({message: 'Employee not found'})
 	res.json(employees)
 })
 
