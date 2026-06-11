@@ -173,6 +173,7 @@ function clearEditor() {
 // 10. Notes page — user action: create a new note
 // On "New note" click, create a blank note and add it to the sidebar
 // Creating a note = first POST with title "Untitled" and empty body, secondly update the note, but you don't need to implement update here, these are considered as separate steps.
+// theoretically for creating a new note, it is just the first step, and the end-to-end logic for this step is: on click, create a blank note, add to left sidebar and display it on the right side bar / select this created note.
 // ------------------------------------------------------------
 document.getElementById('btn-new-note').onclick = async () => {
   const res = await fetch(`${baseURL}/note/create`, {
