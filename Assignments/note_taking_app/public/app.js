@@ -202,29 +202,48 @@ document.getElementById('btn-new-note').onclick = async () => {
 // 11. Notes page — user action: update a note
 // On save click, PATCH /note/:id with the current title and body
 // Then reload the list and re-select the updated note
+// but there are different scenarios:
+// 1. The note is new (no id), then we need to create a new note, this is very important, without this, user can only use 'create note' button to create a new note, but they can't use 'save' button to create a new note. now user have both options, this can increase new user experience. when they just log in, they can directly start writing notes using the notes editting section on the right part of the page.
+// 2. The note is existing (has an id), then we need to update the note
 // ------------------------------------------------------------
 document.getElementById('btn-save').onclick = async () => {
-  if (!currentNoteId) return // if no note is selected, do nothing
+  const title = noteTitle.value
+  const body = noteBody.value
 
-  const res = await fetch(`${baseURL}/note/${currentNoteId}`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`
-    },
-    body: JSON.stringify({ title: noteTitle.value, body: noteBody.value })
-  })
+  if (currentNoteId) {
+    // 已有 note → 更新
+    const res = await fetch(`${baseURL}/note/${currentNoteId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ title, body })
+    })
 
-  const data = await res.json()
+    const data = await res.json()
+    if (!res.ok) { console.error(data.error); return }
 
-  if (!res.ok) {
-    console.error(data.error)
-    return
+    await loadNotes()
+    selectNote(data.note[0])
+
+  } else {
+    // 没有选中 note → 创建新的
+    const res = await fetch(`${baseURL}/note/create`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ title, body })
+    })
+
+    const data = await res.json()
+    if (!res.ok) { console.error(data.error); return }
+
+    await loadNotes()
+    selectNote(data.note[0])
   }
-
-  const note = data.note[0]
-  await loadNotes()
-  selectNote(note)
 }
 
 // ------------------------------------------------------------
