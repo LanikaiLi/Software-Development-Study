@@ -1,15 +1,15 @@
 // ------------------------------------------------------------
-// 1. State — 记录当前状态
+// 1. State — track current session
 // ------------------------------------------------------------
-let token = null        // 存登录后拿到的 JWT token
-let currentNoteId = null  // 存当前选中的 note id
+let token = null        // JWT token received after login
+let currentNoteId = null  // ID of the currently selected note
 
 // No trailing slash — `${baseURL}/auth/...` must not become ...com//auth/...
 // const baseURL = "https://your-notes-api.onrender.com"
 const baseURL = "https://software-development-study-2-3dma.onrender.com"
 
 // ------------------------------------------------------------
-// 2. 拿到页面上所有需要用的元素
+// 2. Grab all DOM elements we need
 // ------------------------------------------------------------
 const authPage = document.getElementById('auth-page')
 const notesPage = document.getElementById('notes-page')
@@ -22,7 +22,7 @@ const noteBody = document.getElementById('note-body')
 const searchInput = document.getElementById('search-input')
 
 // ------------------------------------------------------------
-// 3. 页面切换
+// 3. Page switching
 // ------------------------------------------------------------
 function showNotesPage() {
   authPage.style.display = 'none' // none means to hide the element
@@ -35,8 +35,8 @@ function showAuthPage() {
 }
 
 // ------------------------------------------------------------
-// 4. 登陆页面用户行为1: 注册
-// 用户点击register button时，摘取usernameInput和passwordInput的值，然后发送请求到backend的这个api route：/auth/user/register
+// 4. Auth page — user action 1: register
+// On register click, read usernameInput and passwordInput, then POST to /auth/user/register
 // ------------------------------------------------------------
 document.getElementById('btn-register').onclick = async () => {
   const username = usernameInput.value
@@ -45,7 +45,7 @@ document.getElementById('btn-register').onclick = async () => {
   const res = await fetch(`${baseURL}/auth/user/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }) // JSON.stringify is used to convert the username and password object into a JSON string
+    body: JSON.stringify({ username, password }) // JSON.stringify converts the object into a JSON string
   })
 
   const data = await res.json()
@@ -59,14 +59,13 @@ document.getElementById('btn-register').onclick = async () => {
 }
 
 // ------------------------------------------------------------
-// 5. 登陆页面用户行为2: 登录
-// 用户点击sign in button时，摘取usernameInput和passwordInput的值，然后发送请求到backend的这个api route：/auth/user/login
-// 如果成功，则将token存起来并展示notes page （存起来是因为之后在notes 相关的所有routes都要带上这个token才能确保每个用户只能看到他们自己的notes）
-// 如果不成功，则显示错误信息和对用户的建议，比如：
-// - 如果用户名不存在，则显示："User not found. Please register first."
-// - 如果密码错误，则显示："Invalid password. Please try again."
-// - 如果用户名和密码都错误，则显示："Invalid username or password. Please try again."
-// - 如果用户名和密码都正确，则将token存起来并展示notes page
+// 5. Auth page — user action 2: login
+// On sign-in click, read usernameInput and passwordInput, then POST to /auth/user/login
+// On success, store the token and show the notes page (the token is required on all note routes so each user only sees their own notes)
+// On failure, show an error message from the backend, e.g.:
+// - Unknown user: "Invalid username or password"
+// - Wrong password: "Invalid password"
+// - On success: store token and show notes page
 // ------------------------------------------------------------
 document.getElementById('btn-login').onclick = async () => {
   const username = usernameInput.value
@@ -85,14 +84,15 @@ document.getElementById('btn-login').onclick = async () => {
     return
   }
 
-  token = data.token  // 存起来，之后每次请求都要带
+  token = data.token  // store for use on every subsequent request
   showNotesPage()
   loadNotes()
 }
 
 // ------------------------------------------------------------
-// 6. notes页面用户行为3:登出
-// 用户点击sign out button时，将token清空并展示auth page， 将token清空是因为后续不需要这个token了，我们也需要用token = null的方式来标注当前没有登录的状态，我们用token来标注登陆的session
+// 6. Notes page — user action 3: logout
+// On sign-out click, clear the token and show the auth page
+// token = null marks the user as logged out; we use token to represent the login session
 // ------------------------------------------------------------
 document.getElementById('btn-logout').onclick = () => {
   token = null
@@ -102,9 +102,9 @@ document.getElementById('btn-logout').onclick = () => {
 }
 
 // ------------------------------------------------------------
-// 7. notes页面用户行为4: 加载所有 notes
-// 页面切换到 notes page 时自动调用，因为页面切换到 notes page 时，我们需要为用户展示他现在有的所有笔记
-// 从后端拿到当前用户的所有 notes，渲染到左边列表
+// 7. Notes page — user action 4: load all notes
+// Called when switching to the notes page so we can show the user's existing notes
+// Fetches all notes from the backend and renders them in the left sidebar
 // ------------------------------------------------------------
 async function loadNotes() {
   const res = await fetch(`${baseURL}/note/get`, {
@@ -118,10 +118,10 @@ async function loadNotes() {
     return
   }
 
-  const notes = data.notes ?? [] // ？？ means if the data.notes is null, then use an empty array
+  const notes = data.notes ?? [] // ?? uses an empty array if data.notes is null/undefined
   renderNotesList(notes)
 
-  // 像 magaphone 加载 posts 后立刻展示内容一样，有 note 时自动选中第一条
+  // Like magaphone loading posts — auto-select the first note when any exist
   if (notes.length > 0) {
     selectNote(notes[0])
   } else {
@@ -130,11 +130,11 @@ async function loadNotes() {
 }
 
 // ------------------------------------------------------------
-// 8. note页面机器行为 - 渲染 左侧notes 列表
-// 把 notes 数组渲染成左边列表里的一条条 note
+// 8. Notes page Machine Behavior — render the left sidebar list
+// Renders the notes array as individual items in the sidebar
 // ------------------------------------------------------------
 function renderNotesList(notes) {
-  notesList.innerHTML = ''  // 先清空，因为之前可能有其他的note，我们需要先清空， 不然每次call这个function会无限append下去
+  notesList.innerHTML = ''  // clear first; otherwise each call would keep appending
 
   notes.forEach(note => {
     const item = document.createElement('div')
@@ -142,7 +142,7 @@ function renderNotesList(notes) {
     item.dataset.noteId = note.id
     item.textContent = note.title || 'Untitled'
 
-    // 用户点击某条 note → 右边显示内容
+    // User clicks a note → show its content on the right
     item.onclick = () => selectNote(note)
 
     notesList.appendChild(item)
@@ -150,8 +150,8 @@ function renderNotesList(notes) {
 }
 
 // ------------------------------------------------------------
-// 9. note页面用户行为：选中某条 note
-// 用户点击左边列表某条 note 时，右边显示它的内容
+// 9. Notes page — user action: select a note
+// When the user clicks a sidebar item, populate the editor on the right
 // ------------------------------------------------------------
 function selectNote(note) {
   currentNoteId = note.id
@@ -170,9 +170,9 @@ function clearEditor() {
 }
 
 // ------------------------------------------------------------
-// 10. note页面用户行为：创建新 note
-// 用户点击new note button时，创建一个新 blank note，并渲染到左边列表
-// 创建新笔记其实 = 创建一个title为Untitled，body为空的note，然后再更新笔记的title和body为用户的输入
+// 10. Notes page — user action: create a new note
+// On "New note" click, create a blank note and add it to the sidebar
+// Creating a note = first POST with title "Untitled" and empty body, secondly update the note, but you don't need to implement update here, these are considered as separate steps.
 // ------------------------------------------------------------
 document.getElementById('btn-new-note').onclick = async () => {
   const res = await fetch(`${baseURL}/note/create`, {
@@ -192,16 +192,16 @@ document.getElementById('btn-new-note').onclick = async () => {
     return
   }
 
-  // 后端 Supabase insert().select() 返回的是数组，不是单个对象
-  const note = data.note[0] // data.note is an array, so we need to get the first element
+  // Supabase insert().select() returns an array, not a single object
+  const note = data.note[0]
   await loadNotes()
   selectNote(note)
 }
 
 // ------------------------------------------------------------
-// 11. note页面用户行为：更新 note
-// 用户点击save button时，发送请求到 PATCH /note/:id，更新 note 的 title 和 body
-// 然后重新加载 notes 列表，并选中更新后的 note
+// 11. Notes page — user action: update a note
+// On save click, PATCH /note/:id with the current title and body
+// Then reload the list and re-select the updated note
 // ------------------------------------------------------------
 document.getElementById('btn-save').onclick = async () => {
   if (!currentNoteId) return // if no note is selected, do nothing
@@ -228,9 +228,8 @@ document.getElementById('btn-save').onclick = async () => {
 }
 
 // ------------------------------------------------------------
-// 12. note页面用户行为：删除 note
-// 用户点击delete button时，发送请求到 DELETE /note/:id，删除 note
-// 然后重新加载notes列表，并选中更新后的note
+// 12. Notes page — user action: delete a note
+// On delete click, DELETE /note/delete/:id, then reload the list
 // ------------------------------------------------------------
 document.getElementById('btn-delete').onclick = async () => {
   if (!currentNoteId) return
@@ -253,17 +252,17 @@ document.getElementById('btn-delete').onclick = async () => {
 }
 
 // ------------------------------------------------------------
-// 13. note页面用户行为：搜索 note
-// 用户在 search 输入框里打字，按 Enter 键触发搜索（不是 button click）
-// 后端 route: GET /note/search?query_text=...
+// 13. Notes page — user action: search notes
+// User types in the search box and presses Enter (not a button click)
+// Backend route: GET /note/search?query_text=...
 // ------------------------------------------------------------
 async function searchNotes() {
   const query = searchInput.value.trim()
 
-  // 空关键词 = 显示全部 notes
+  // Empty query = show all notes
   if (!query) {
     await loadNotes()
-    return //here after return, the entire function will stop executing, so the api call below will not be made
+    return // return stops the entire function; the API call below will not run
   }
 
   const res = await fetch(
@@ -288,7 +287,7 @@ async function searchNotes() {
   }
 }
 
-// onclick 是「点击」；keydown 是「键盘按下」——用 event.key 判断按了哪个键
+// onclick = click; keydown = key press — use event.key to check which key was pressed
 searchInput.addEventListener('keydown', (event) => {
   if (event.key !== 'Enter') return
 
