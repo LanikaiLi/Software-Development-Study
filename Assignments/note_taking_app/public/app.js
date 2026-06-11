@@ -6,7 +6,7 @@ let currentNoteId = null  // 存当前选中的 note id
 
 // No trailing slash — `${baseURL}/auth/...` must not become ...com//auth/...
 // const baseURL = "https://your-notes-api.onrender.com"
-const baseURL = "http://localhost:3001"
+const baseURL = "https://software-development-study-2-3dma.onrender.com"
 
 // ------------------------------------------------------------
 // 2. 拿到页面上所有需要用的元素
