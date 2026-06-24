@@ -1,4 +1,5 @@
 how to run this chatbot app:
+0. setup ollama following instructions at ollama.com
 1. cd to the path of this app's directory
 2. ollama serve
 3. python3 -m http.server 8000
