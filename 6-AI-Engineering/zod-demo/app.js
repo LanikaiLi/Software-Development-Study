@@ -1,5 +1,14 @@
+import { z } from "zod"
+
 const inputText = process.argv.slice(2).join(" ") || "Jane, age 29, Toronto, likes cooking"
 const model = "llama3.2"
+
+const personSchema = z.object({
+    name: z.string().min(1),
+    age: z.number().int().positive().max(150),
+    city: z.string().min(1),
+    hobbies: z.array(z.string().min(1)).max(5) // max(5) means the array can have at most 5 items, min(1) means each item in the array must be at least 1 character long, notice how the min(1) is inside the parentheses of the array, this is a way to apply the min(1) to each item in the array
+})
 //console.log("This is the input text: ", inputText)
 
 const prompt = `Take the text below and extract a person profile. Return ONLY valid JSON with no additional text before or after, use this exact template:
@@ -39,6 +48,9 @@ const runQuery = async () => {
    // console.log("This is the data: ", data)
     const parsed = JSON.parse(data.response)
     console.log("This is the parsed data: ", parsed)
+
+    const validatedPerson = personSchema.parse(parsed)
+    console.log("This is the validated person: ", validatedPerson)
 
 }
 
