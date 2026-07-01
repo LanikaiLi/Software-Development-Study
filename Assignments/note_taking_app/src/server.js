@@ -32,7 +32,7 @@ app.use('/auth', authRoutes)
 app.use('/note', noteRoutes)
 
 
-app.listen(3001, () => {
+app.listen(3001, () => { //app.listen is a method that listens for incoming requests on the specified port, it is required for all express servers. it has to be put after all the routes are defined, if you put it before routes (app.get("/movies", (req, res) => { ... })), the server will not start
   console.log('Server is running on port 3001');
 });
 
