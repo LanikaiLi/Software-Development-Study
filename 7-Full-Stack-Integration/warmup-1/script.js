@@ -10,10 +10,14 @@ let cities = [
 
 // This is a list of cities in which a touring event is being held. Write a function that takes in this list and returns a new list of all the countries where the event is happening, without duplicates.
 
-function getCountries(cities) {
-    return cities.map(city => city.country);
+const getCountries = (cityList) => {
+    const countries = {}
+    cityList.forEach(city => { countries[city.country] = true })
+    return Object.keys(countries)
 }
 
 
-new_cities = getCountries(cities);
-console.log(new_cities);
+// new_cities = getCountries(cities);
+// console.log(new_cities);
+
+console.log(getCountries(cities));
