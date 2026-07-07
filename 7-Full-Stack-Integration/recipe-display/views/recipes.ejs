@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Recipes</title>
+        <link rel="stylesheet" href="/styles.css">
+    </head>
+    <body>
+        <h1>Recipes</h1>
+        <% recipes.forEach((recipe) => { %>
+            <h2><%= recipe.name %></h2>
+            <% if (recipe.vegetarian) { %>
+                <p>vegetarian</p>
+            <% } %>
+            <p>Number of ingredients: <%= recipe.ingredients.length %></p>
+            <ul>
+                <% recipe.ingredients.forEach((ingredient) => { %>
+                    <li><%= ingredient %></li>
+                <% }) %>
+            </ul>
+        <% }) %>
+    </body>
+</html>
