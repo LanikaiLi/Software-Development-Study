@@ -1,1 +1,37 @@
-hello world
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Inventory</title>
+</head>
+<body>
+    <h1>Book Inventory</h1>
+
+    <div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Publishing Company</th>
+                    <th>Inventory</th>
+                    <th>Units Sold</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% books.forEach((book) => { %>
+                <tr>
+                    <td><%= book.title %></td>
+                    <td><%= book.author %></td>
+                    <td><%= book.publishingCompany %></td>
+                    <td><%= book.inventory %></td>
+                    <td><%= book.unitsSold %></td>
+                </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

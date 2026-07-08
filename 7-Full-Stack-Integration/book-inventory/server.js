@@ -6,7 +6,7 @@ const PORT = 3000;
 const app = express();
 
 app.get('/', (req, res) => {
-    res.render('index.ejs')
+    res.render('index.ejs', { books: books });
 })
 
 app.get('/api/books', (req, res) => {
