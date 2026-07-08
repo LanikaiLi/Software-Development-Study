@@ -1,0 +1,4 @@
+to learn bootstrap:
+1. you have to understand there is only one stylesheet: https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css
+2. and learn these css classes used in that stylesheet, so you can use these classes in your frontend : https://bootstrapshuffle.com/classes
+3. understand why bootstrap: it's mostly used by backend developers because it allows them to easily create frontends, it's not very helpful actually as everyone's webpage will look kind of similar if they all use bootstrap, but if you are building things that have a rigid unified looking like in this example, a table, it's not a bad idea to use bootstrap

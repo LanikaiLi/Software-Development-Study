@@ -11,7 +11,7 @@
     <h1>Book Inventory</h1>
 
     <div>
-        <table>
+        <table class="table table-striped table-bordered align-middle">
             <thead>
                 <tr>
                     <th>Title</th>
@@ -27,7 +27,11 @@
                     <td><%= book.title %></td>
                     <td><%= book.author %></td>
                     <td><%= book.publishingCompany %></td>
-                    <td><%= book.inventory %></td>
+                    <% if (book.inventory == 0) { %>
+                        <td class="text-danger">Out of Stock</td>
+                    <% } else { %>
+                        <td><%= book.inventory %></td>
+                    <% } %>
                     <td><%= book.unitsSold %></td>
                 </tr>
                 <% }) %>
