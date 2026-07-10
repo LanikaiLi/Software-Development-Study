@@ -1,21 +1,87 @@
-const express = require('express');
-const books = require('./data');
+const express = require('express')
+const books = require('./data')
+const { MongoClient } = require('mongodb')
 
-const path = require('path'); // this is the path module, it is used to join the paths of the files
-const PORT = 3000;
-const app = express();
+require('dotenv').config()
 
-app.use(express.static(path.join(__dirname, 'public'))); // this is used to serve static files like images, css, js, etc.
+const path = require('path')
+const PORT = process.env.PORT
+const app = express()
 
-app.get('/', (req, res) => {
-    res.render('index.ejs', { books: books });
+const uri = process.env.MONGODB_URI
+const dbName = 'book-inventory'
+const shouldSeed = process.argv.includes('--seed')
+
+app.use(express.json())
+
+let booksCollection
+
+const initializeDatabase = async () => {
+    const client = new MongoClient(uri)
+    await client.connect()
+    const db = client.db(dbName)
+    booksCollection = db.collection("books")
+}
+
+app.use(express.static(path.join(__dirname, 'public')))
+
+app.get('/', async (req, res) => {
+    const response = await fetch(`http://localhost:${PORT}/api/books`)
+    let books = await response.json()
+    tag = req.query.tag
+    if (tag) {
+        books = books.filter(book => book.tags.includes(tag))
+    }
+    res.render('index.ejs', {books: books})
+    // console.log(req.query)
 })
 
-app.get('/api/books', (req, res) => {
-    res.json(books);
+app.get('/api/books', async (req, res) => {
+    const books = await booksCollection.find().toArray()
+    res.json(books)
 })
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+app.post('/api/books', async (req, res) => {
+    const inserted = await booksCollection.insertOne(req.body)
+    res.status(201).json(inserted)
 })
 
+const seedDatabaseThroughApi = async () => {
+    await booksCollection.deleteMany({})
+
+    for (const book of books) {
+        const response = await fetch(`http://localhost:${PORT}/api/books`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(book)
+        })
+
+        if (!response.ok) {
+            const text = await response.text()
+            throw new Error(`Seed failed for "${book.title}": ${response.status} ${text}`)
+        }
+    }
+
+    console.log(`Seed complete: ${books.length} books inserted`)
+}
+
+initializeDatabase().then(() => {
+    const server = app.listen(PORT, async () => {
+        console.log(`Server listening on port ${PORT}.`)
+
+        if (!shouldSeed) return
+
+        try {
+            await seedDatabaseThroughApi()
+            console.log('Manual seed finished')
+        } catch (error) {
+            console.error(error.message)
+            process.exitCode = 1
+        } finally {
+            server.close(() => process.exit(process.exitCode || 0))
+        }
+    })
+}).catch((error) => {
+    console.error('Database initialization failed:', error.message)
+    process.exit(1)
+})
