@@ -17,6 +17,27 @@ async function connectDB() {
 
 connectDB()
 
+function getMonday(date) {
+    const d = new Date(date)
+    const day = d.getDay()
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1)
+    d.setDate(diff)
+    return d
+  }
+  
+  function getDateRange(range) {
+    const now = new Date()
+    const monday = getMonday(now)
+    if (range === 'last_week') monday.setDate(monday.getDate() - 7)
+    if (range === 'next_week') monday.setDate(monday.getDate() + 7)
+    const sunday = new Date(monday)
+    sunday.setDate(monday.getDate() + 6)
+    return {
+      startDate: monday.toISOString().split('T')[0],
+      endDate: sunday.toISOString().split('T')[0]
+    }
+  }
+
 app.get('/', (req, res) => {
   res.send('Server is running')
 })
@@ -62,3 +83,31 @@ app.patch('/tasks/:id', async (req, res) => {
   
     res.json({ message: 'Task updated', task: result })
   })
+
+// 3. delete a task
+app.delete('/tasks/:id', async (req, res) => {
+    const id = req.params.id
+    const result = await getDB().collection('tasks').deleteOne({ _id: new ObjectId(id) })
+    if (result.deletedCount === 0) return res.status(404).json({ error: 'Task not found' })
+    res.json({ message: 'Task deleted', task: result })
+})
+
+// 4. get all tasks with filter
+app.get('/tasks', async (req, res) => {
+    const { range } = req.query
+    let filter = {}
+    if (range !== 'all') {
+      const { startDate, endDate } = getDateRange(range || 'this_week')
+      filter.deadline = { $gte: startDate, $lte: endDate }
+    }
+    const tasks = await db.collection('tasks').find(filter).toArray()
+    res.json({ tasks })
+  })
+
+// 5. get a task by id
+app.get('/tasks/:id', async (req, res) => {
+    const id = req.params.id
+    const task = await getDB().collection('tasks').findOne({ _id: new ObjectId(id) })
+    if (!task) return res.status(404).json({ error: 'Task not found' })
+    res.json({ task })
+})
