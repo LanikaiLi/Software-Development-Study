@@ -23,6 +23,14 @@ const initializeDatabase = async () => {
     booksCollection = db.collection("books")
 }
 
+// 静态文件服务（static file serving）：把本地 public 目录映射到网站根路径。
+// 浏览器请求 /books.png 时，Express 会直接读 public/books.png 返回，不用再写路由。
+// 适合放图片、CSS、JS 等不会变的前端资源；index.ejs 里的 favicon 就是靠这个发出去的。
+//
+// 为什么需要：这个 app 是「前后端一体」——Express 既渲染页面（EJS），又提供 API，
+// 所以静态资源也得由它来发。如果前端单独放到 GitHub Pages / Netlify，
+// 图片等由那边托管，Express 只管 API，通常就不用这行了。
+// 注意：本项目用 EJS 服务端渲染，不能直接搬到 GitHub Pages；要拆前端得先改成纯客户端页面再 fetch API。
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.get('/', async (req, res) => {
