@@ -1,0 +1,15 @@
+{
+  "name": "movie-ratings-app",
+  "version": "1.0.0",
+  "description": "Movie ratings app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "CircuitStream",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.19.2"
+  }
+}
