@@ -9,7 +9,9 @@
   "author": "CircuitStream",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^17.4.2",
     "ejs": "^3.1.10",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "mongodb": "^7.5.0"
   }
 }
