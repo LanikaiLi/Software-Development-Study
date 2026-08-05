@@ -1,4 +1,4 @@
-const distanceBetween = (cityA, cityB) => {
+const distanceBetweenKM = (cityA, cityB) => {
 	const toRadians = degrees => (degrees * Math.PI) / 180
 	const lat1 = toRadians(cityA.lat)
 	const lon1 = toRadians(cityA.lon)
@@ -14,5 +14,22 @@ const distanceBetween = (cityA, cityB) => {
 	return Math.round(6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)))
 }
 
-console.log(graph)
-console.log(distanceBetween(graph.cities['Dublin'], graph.cities['London']))
+distanceBetween = (firstCity, secondCity) => {
+    const queue = [{city: firstCity, distanceAway: 0}]
+    const checked = {}
+
+    while (queue.length > 0) {
+        let current = queue.shift()
+        let currentCity = current.city
+        let depth = current.distanceAway
+        checked[currentCity.name] = true
+        if (currentCity.name === secondCity.name) {
+            return depth - 1
+        }
+        currentCity.neighbors.forEach(city => {
+            if (!checked[city.name]) {
+                queue.push({city: city, distanceAway: depth + 1})
+            }
+        })
+    }
+}
