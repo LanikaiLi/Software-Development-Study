@@ -207,8 +207,8 @@ const getFewestTransfersPath_2 = (startCity, endCity) => {
     const path = []
     let city = endCity
 
-    while (city) {
-        path.unshift(graph.cities[city].code)
+    while (city) { // while there is a city, because when we reach the start city, previous city of the start city will be undefined and that's when we break the loop
+        path.unshift(graph.cities[city].code) // we use unshift instead of push because we want to add the city to the beginning of the path
         if (city === startCity) break
         city = previous[city]
     }
@@ -218,7 +218,55 @@ const getFewestTransfersPath_2 = (startCity, endCity) => {
 
 // 9. SHORTEST PATH
 // Find the shortest-distance path and return an array of 3-letter airport codes.
-const getShortestDistancePath = (startCity, endCity) => {}
+const getShortestDistancePath = (startCity, endCity) => {
+    const distances = {}
+    const previous = {}
+    const unvisited = []
+
+    for (const city of Object.keys(graph.cities)) {
+        distances[city] = Infinity
+        unvisited.push(city)
+    }
+
+    distances[startCity] = 0
+
+    while (unvisited.length > 0) {
+        let bestCity = null
+        let bestDistance = Infinity
+
+        for (const city of unvisited) {
+            if (distances[city] < bestDistance) {
+                bestCity = city
+                bestDistance = distances[city]
+            }
+        }
+
+        if (bestCity === null) break
+
+        unvisited.splice(unvisited.indexOf(bestCity), 1)
+        if (bestCity === endCity) break
+
+        for (const neighbor of getNeighbors(bestCity)) {
+            const newDistance = distances[bestCity] + kmDistance(bestCity, neighbor)
+
+            if (newDistance < distances[neighbor]) {
+                distances[neighbor] = newDistance
+                previous[neighbor] = bestCity
+            }
+        }
+    }
+
+    const path = []
+    let currentCity = endCity
+    
+    while (currentCity) {
+        path.unshift(graph.cities[currentCity].code)
+        if (currentCity === startCity) break
+        currentCity = previous[currentCity]
+    }
+
+    return path
+}
 
 // 10. FIND HUB CITY
 // Return the name of the airport with the most direct connections.
