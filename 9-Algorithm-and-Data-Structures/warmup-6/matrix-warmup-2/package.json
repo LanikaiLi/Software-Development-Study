@@ -1,0 +1,11 @@
+{
+  "name": "matrix-warmup-2",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+    "mocha": "^11.0.0"
+  }
+}
