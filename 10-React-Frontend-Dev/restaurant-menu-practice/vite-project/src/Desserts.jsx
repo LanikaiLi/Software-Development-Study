@@ -1,9 +1,11 @@
+import Menuitem from './Menuitem'
+
 function Desserts({desserts}) {
     return (
         <ul>
         {
           desserts.map((dessert_item) => (
-            <li key={dessert_item.name}>{dessert_item.name} - {dessert_item.price}</li>
+            <Menuitem menu_item={dessert_item} />
           ))
         }
       </ul>

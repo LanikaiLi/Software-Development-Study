@@ -1,9 +1,11 @@
+import Menuitem from './Menuitem'
+
 function Mains({mains}) {
     return (
     <ul>
       {
         mains.map((main_item) => (
-          <li key={main_item.name}>{main_item.name} - {main_item.price}</li>
+          <Menuitem menu_item={main_item} />
         ))
       }
     </ul>

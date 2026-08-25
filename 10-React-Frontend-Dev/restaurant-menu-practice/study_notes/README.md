@@ -1,6 +1,6 @@
 # Restaurant Menu Practice — Study Notes
 
-Notes from debugging why `<starters />` rendered nothing, and how React naming actually works.
+Notes from this practice: component vs HTML tag names, props / destructuring `{ }`, list `key`, and unknown HTML tags.
 
 ---
 
@@ -106,3 +106,66 @@ index.html          → empty #root
 ```
 
 Only nodes that appear as `<Something />` need PascalCase components.
+
+---
+
+## Props: why the component parameter needs `{ }`
+
+**Props** = data a parent passes to a child. In JSX they look like HTML attributes. In JavaScript they are **one object**.
+
+```jsx
+<Starters starters={menu.starters} />
+```
+
+React does **not** call `Starters(menu.starters)`. It always calls:
+
+```js
+Starters({ starters: menu.starters })
+```
+
+The function’s first argument is that whole object. `{ starters }` is **destructuring**: pull the `starters` field out of the object.
+
+| You write | What you get |
+|-----------|----------------|
+| `function Starters(starters)` | The whole props object `{ starters: [...] }` |
+| `function Starters({ starters })` | The array inside it |
+| `function Menuitem(menu_item)` | The whole props object `{ menu_item: { name, price } }` |
+| `function Menuitem({ menu_item })` | The dish `{ name, price }` |
+
+A normal function can be `add(a, b)` because you call `add(1, 2)`. A component is always called with **one object**, so you destructure.
+
+Same bug as `CityCard`: use `({ city })`, not `(city)`.
+
+### Why Starters showed `" - "`
+
+`Menuitem` rendered `{menu_item.name} - {menu_item.price}`. Without `{ }` around the parameter, `name` and `price` were `undefined`. The hyphen still printed.
+
+Mains/Desserts were fine because they did not use `Menuitem`; they read `main_item.name` from the array item directly.
+
+The dish was nested one level deeper: `menu_item.menu_item.name`. Destructure once:
+
+```jsx
+function Menuitem({ menu_item }) {
+  return <li>{menu_item.name} - {menu_item.price}</li>
+}
+```
+
+### `key` belongs on the `.map()` child
+
+```jsx
+{starters.map((starter) => (
+  <Menuitem key={starter.name} menu_item={starter} />
+))}
+```
+
+`key` is for React’s list identity, not for display. Putting `key` on the `<li>` *inside* `Menuitem` does not count.
+
+---
+
+## Can we invent HTML tags like `<starters>`?
+
+The browser will still create a DOM node, but it is not a real built-in tag (`h1`, `p`, `ul`). It is usually an `HTMLUnknownElement`: no default look, no special behavior.
+
+Official custom elements (Web Components) **must contain a hyphen**, e.g. `<menu-starters>`, and you register them with `customElements.define`. A single word like `starters` is not a valid custom element name.
+
+Lowercase `<starters />` in React is not a new HTML feature. It just dumps an unknown empty tag into the page.
