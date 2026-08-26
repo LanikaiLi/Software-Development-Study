@@ -1,20 +1,52 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { useState } from "react"
+import heroImg from "./assets/hero.png"
+import reactLogo from "./assets/react.svg"
+import viteLogo from "./assets/vite.svg"
+import "./App.css"
 
 function App() {
   const [count, setCount] = useState(0)
+  const [isVisible, setIsVisible] = useState(true)
+  const [github, setGithub] = useState({
+    text: "GitHub",
+    icon: "/icons.svg#github-icon",
+  })
+  const [links, setLinks] = useState([
+    {
+      text: "GitHub",
+      icon: "/icons.svg#github-icon",
+    },
+    {
+      text: "Discord",
+      icon: "/icons.svg#discord-icon",
+    },
+    {
+      text: "X.com",
+      icon: "/icons.svg#x-icon",
+    },
+    {
+      text: "Bluesky",
+      icon: "/icons.svg#bluesky-icon",
+    },
+  ])
 
   return (
     <>
       <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
+        {isVisible && (
+          <div className="hero">
+            <img
+              src={heroImg}
+              className="base"
+              width="170"
+              height="179"
+              alt=""
+            />
+            <img src={reactLogo} className="framework" alt="React logo" />
+            <img src={viteLogo} className="vite" alt="Vite logo" />
+          </div>
+        )}
+
         <div>
           <h1>Get started</h1>
           <p>
@@ -24,13 +56,41 @@ function App() {
         <button
           type="button"
           className="counter"
-          onClick={() => setCount((count) => count + 1)}
+          onClick={() => {
+            setCount((count) => count + 1)
+            setCount((count) => count + 1)
+            setCount((count) => count + 1)
+          }}
         >
           Count is {count}
         </button>
       </section>
 
-      <div className="ticks"></div>
+      <section
+        style={{ display: "flex", justifyContent: "center", gap: "20px" }}
+      >
+        <button
+          type="button"
+          className="counter"
+          onClick={() => {
+            setIsVisible((isVisible) => !isVisible)
+          }}
+        >
+          {isVisible ? "Hide Logo" : "Show Logo"}
+        </button>
+        <button
+          type="button"
+          className="counter"
+          onClick={() => {
+            setGithub({
+              ...github,
+              text: "My Github",
+            })
+          }}
+        >
+          "My Github"
+        </button>
+      </section>
 
       <section id="next-steps">
         <div id="docs">
@@ -61,54 +121,20 @@ function App() {
           <h2>Connect with us</h2>
           <p>Join the Vite community</p>
           <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
+            {links.map((link) => (
+              <li>
+                <a href="https://github.com/vitejs/vite" target="_blank">
+                  <svg
+                    className="button-icon"
+                    role="presentation"
+                    aria-hidden="true"
+                  >
+                    <use href={link.icon}></use>
+                  </svg>
+                  {link.text}
+                </a>
+              </li>
+            ))}
           </ul>
         </div>
       </section>
