@@ -11,7 +11,7 @@ function App() {
 
   useEffect (() => {
     fetch("https://j-goodman.github.io/language-class-data/data/languages.json").then(response => response.json()).then(data => setLanguages(data.languages))
-  })
+  }, [])
 
   const course = courses[0]
   const language = languages.find(lang => lang.language === course?.language)
