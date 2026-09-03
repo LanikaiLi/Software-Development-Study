@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import CourseDetail from './CourseDetail'
 
 function App() {
   const [courses, setCourses] = useState([])
@@ -19,18 +20,7 @@ function App() {
   return (
     <div>
       {course && (
-        <div>
-          <h1>
-            <img src = {language?.['flag-icon']} alt={course.language} />
-            {course.level.charAt(0).toUpperCase() + course.level.slice(1)}  {course.language} with {course.teacher}
-          </h1>
-          <p>{course.description}</p>
-          <ul>
-            <li>Days: {course.days.join(", ")}</li>
-            <li>Time: {course.time.join(" - ")}</li>
-            <li>Capacity: {course.capacity}</li>
-          </ul>
-        </div>
+        <CourseDetail course={course} language={language}/>
       )}
     </div>
   )

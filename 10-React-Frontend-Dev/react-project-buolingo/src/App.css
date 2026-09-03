@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Atkinson Hyperlegible', sans-serif;
+  background: #eafaf5;
+}
+
+.course-card {
+  max-width: 640px;
+  margin: 48px auto;
+  padding: 0 32px;
+  color: #2f4858;
+}
+
+.course-card h1 {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  color: #1c6e8c;
+  font-size: 32px;
+}
+
+.course-card img {
+  width: 120px;
+  margin-bottom: 16px;
+}
+
+.course-card ul {
+  list-style: none;
+  padding: 0;
+}
