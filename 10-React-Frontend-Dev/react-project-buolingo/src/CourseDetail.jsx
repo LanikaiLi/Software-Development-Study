@@ -2,6 +2,7 @@ function CourseDetail({course, language}) {
     return (
         <div className="course-card">
           <h1>
+            {course.name}ß
             <img src={language?.['flag-icon']} alt={`${course.language} flag`} />
             {course.level.charAt(0).toUpperCase() + course.level.slice(1)} {course.language} with {course.teacher}
           </h1>

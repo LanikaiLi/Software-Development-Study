@@ -3,8 +3,7 @@ function CourseList({courses, languages}) {
         <ul>
             {courses.map(course => (
                 <li>
-                    <h2>{course.name}</h2>
-                    <p>{course.description}</p>
+                    <CourseDetail course={course} language={languages.find(lang => lang.language === course.language)}/>
                 </li>
             ))}
         </ul>
