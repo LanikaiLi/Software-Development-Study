@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import CourseDetail from './CourseDetail'
+import CourseList from './CourseList'
 
 function App() {
   const [courses, setCourses] = useState([])
@@ -20,7 +21,8 @@ function App() {
   return (
     <div>
       {course && (
-        <CourseDetail course={course} language={language}/>
+        // <CourseDetail course={course} language={language}/>
+        <CourseList courses={courses} languages={languages}/>
       )}
     </div>
   )
