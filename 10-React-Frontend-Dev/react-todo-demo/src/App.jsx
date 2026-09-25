@@ -1,5 +1,5 @@
 import {useState} from 'react';
-//import AddTask from './AddTask';
+import AddTask from './AddTask';
 //import TaskList from './TaskList';
 
 let nextId = 3
@@ -25,6 +25,7 @@ function App() {
   return (
     <>
       <h2>Task List!</h2>
+      <AddTask onAddTask={handleAddTask}></AddTask>
       {
         tasks.map(task => {
           return (<p>{task.text}</p>)
