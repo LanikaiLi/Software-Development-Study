@@ -19,7 +19,7 @@ const getWinner = board => {
     return board.includes("") ? "" : "draw"
 }
 
-router.param('id', async (req, res, next, id) => {
+router.param('id', async (req, res, next, id) => { // this is a middleware function that is used to get the game object from the database, it is used in every function that contains a :id parameter, it's just a way to write helper function in node
     const game = mongoose.isValidObjectId(id) && await Game.findById(id)
     if (!game) {
         return res.status(404).json({message: 'Game not found'})
