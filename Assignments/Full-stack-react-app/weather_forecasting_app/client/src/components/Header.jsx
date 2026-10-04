@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 function Header() {
   const { unit, toggleUnit } = useUnit();  
   const { token, logout } = useAuth();
-  
+
   return (
     <header className="header">
       <Link to="/" className="header-logo">
@@ -16,7 +16,9 @@ function Header() {
       <button type="button" className="unit-toggle" onClick={toggleUnit}>°{unit}</button>
       {
         token ? (
-            <button type="button" className="logout-button" onClick={logout}></button>
+            <button type="button" className="logout-button" onClick={logout}>
+                Log out
+            </button>
         ) : (
             <Link to="/login" className="login-link">
                 Log in / Sign up
