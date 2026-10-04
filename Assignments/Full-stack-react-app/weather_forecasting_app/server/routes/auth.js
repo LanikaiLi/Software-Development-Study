@@ -2,6 +2,8 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { connectDB, getDB } from '../db.js';
+import { ObjectId } from 'mongodb';
+import requireAuth from '../middleware/requireAuth.js';
 
 const router = express.Router();
 
@@ -55,6 +57,15 @@ router.post('/register', async (req, res) => {
   
     // 5. 返回 200 和 { token: token }
     res.status(200).json({ token: token });
+  });
+
+  router.get('/me', requireAuth, async (req, res) => {
+    // 1. 用 findOne 找用户
+    //    条件：{ _id: new ObjectId(req.userId) }
+    const user = await getDB().collection('users').findOne({_id: new ObjectId(req.userId)});
+  
+    // 2. 返回 200 和 { email: user.email }
+    res.status(200).json({ email: user.email });
   });
 
 export default router;
