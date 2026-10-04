@@ -3,12 +3,10 @@ import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../context/AuthContext.jsx';
 
 function AuthPage() {
-  // 1. 用 useState 建 3 个 state，初始值都是 ''：
-  //    email、password、error
+  const [mode, setMode] = useState('login'); // 'login' 或 'register'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [mode, setMode] = useState('login'); // 'login' 或 'register'
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -18,29 +16,38 @@ function AuthPage() {
     setError('');
 
     try {
-      // 2. 用上面学的 POST 写法，请求 '/api/auth/login'，结果存在 res 里
+      // 1. 如果是注册模式，先注册
+      if (mode === 'register') {
+        const registerRes = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+        const registerData = await registerRes.json();
+        if (!registerRes.ok) throw new Error(registerData.error);
+      }
+
+      // 2. 登录（注册成功后也会走到这里，所以注册完自动登录）
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-
-      // 3. const data = await res.json();
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
 
-      // 4. 如果 !res.ok → throw new Error(data.error)
-      if (!res.ok) {
-        throw new Error(data.error);
-      }
-
-      // 5. 登录成功：login(data.token)
+      // 3. 存门禁卡，跳回首页
       login(data.token);
-      // 6. 跳回首页：navigate('/')
       navigate('/');
     } catch (err) {
-      // 7. setError(err.message)
       setError(err.message);
     }
+  }
+
+  // 切换登录 / 注册时，顺便清空错误信息
+  function switchMode(newMode) {
+    setMode(newMode);
+    setError('');
   }
 
   return (
@@ -48,7 +55,22 @@ function AuthPage() {
       <Link to="/" className="back-link">← Back to home</Link>
 
       <section className="auth-card">
-        <h2>Log in</h2>
+        <div className="auth-tabs">
+          <button
+            type="button"
+            className={mode === 'login' ? 'tab active' : 'tab'}
+            onClick={() => switchMode('login')}
+          >
+            Log in
+          </button>
+          <button
+            type="button"
+            className={mode === 'register' ? 'tab active' : 'tab'}
+            onClick={() => switchMode('register')}
+          >
+            Sign up
+          </button>
+        </div>
 
         <form onSubmit={handleSubmit} className="auth-form">
           <label htmlFor="email">Email</label>
@@ -69,7 +91,9 @@ function AuthPage() {
 
           {error && <p className="error-message">{error}</p>}
 
-          <button type="submit" className="submit-button">Log in</button>
+          <button type="submit" className="submit-button">
+            {mode === 'login' ? 'Log in' : 'Sign up'}
+          </button>
         </form>
 
         <p className="demo-account">Demo account: demo@test.com / demo1234</p>
