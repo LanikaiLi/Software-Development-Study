@@ -1,8 +1,11 @@
 import { Link } from 'react-router';
 import { useUnit } from '../context/UnitContext.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
 
 function Header() {
   const { unit, toggleUnit } = useUnit();  
+  const { token, logout } = useAuth();
+  
   return (
     <header className="header">
       <Link to="/" className="header-logo">
@@ -11,9 +14,15 @@ function Header() {
 
       <div className="header-actions">
       <button type="button" className="unit-toggle" onClick={toggleUnit}>°{unit}</button>
-        <Link to="/login" className="login-link">
-          登录 / 注册
-        </Link>
+      {
+        token ? (
+            <button type="button" className="logout-button" onClick={logout}></button>
+        ) : (
+            <Link to="/login" className="login-link">
+                Log in / Sign up
+            </Link>
+        )
+      }
       </div>
     </header>
   );
