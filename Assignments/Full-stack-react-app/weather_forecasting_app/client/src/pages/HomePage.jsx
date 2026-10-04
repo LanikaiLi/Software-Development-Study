@@ -1,5 +1,6 @@
 import { useReducer } from 'react';
 import SearchBar from '../components/SearchBar.jsx';
+import CurrentWeather from '../components/CurrentWeather.jsx';
 
 // 天气请求的初始状态
 const initialState = {
@@ -43,7 +44,13 @@ function HomePage() {
   return (
     <main className="home-page">
       <SearchBar onSearch={searchCity} />
-      <p>Status: {weather.status}</p>
+
+      {/* 根据 status 决定显示什么 */}
+      {weather.status === 'loading' && <p className="status-message">Loading...</p>}
+
+      {weather.status === 'error' && <p className="error-message">{weather.error}</p>}
+
+      {weather.status === 'success' && <CurrentWeather data={weather.currentWeather} />}
     </main>
   );
 }
