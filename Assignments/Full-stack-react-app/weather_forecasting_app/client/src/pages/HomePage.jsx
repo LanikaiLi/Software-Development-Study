@@ -1,7 +1,9 @@
-import { useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import SearchBar from '../components/SearchBar.jsx';
 import CurrentWeather from '../components/CurrentWeather.jsx';
 import Forecast from '../components/Forecast.jsx';
+import { useAuth } from '../context/AuthContext.jsx';
+import FavoritesList from '../components/FavoritesList.jsx';
 
 const initialState = {
   status: 'idle', // 'idle' | 'loading' | 'success' | 'error'
@@ -35,6 +37,30 @@ function toDailyForecast(list) {
 
 function HomePage() {
   const [weather, dispatch] = useReducer(weatherReducer, initialState);
+  const [favorites, setFavorites] = useState([]);
+  const { token } = useAuth();
+
+  useEffect(() => {
+    // 1. 如果没有 token：setFavorites([])，然后 return
+    if (!token) {
+      setFavorites([])
+      return
+    }
+
+    async function fetchFavorites() {
+      // 2. 用 fetch 请求 '/api/favorites'，带上门禁卡（和 AuthContext 里的写法一样）
+      // 3. const data = await res.json();
+      // 4. setFavorites(data.favorites)
+      const res = await fetch('/api/favorites', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = await res.json();
+      setFavorites(data.favorites)
+    }
+  
+    fetchFavorites();
+  }, [token]);
+
 
   async function searchCity(city) {
     dispatch({ type: 'FETCH_START' });
@@ -63,6 +89,7 @@ function HomePage() {
   return (
     <main className="home-page">
       <SearchBar onSearch={searchCity} />
+      <FavoritesList favorites={favorites} />
 
       {weather.status === 'loading' && <p className="status-message">Loading...</p>}
 
