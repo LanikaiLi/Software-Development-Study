@@ -28,3 +28,35 @@ body {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   margin-bottom: 20px;
 }
+
+.forecast-list {
+  display: flex;
+  gap: 12px;
+}
+
+.forecast-card {
+  background-color: #f5f8fb;
+  padding: 16px;
+  border-radius: 12px;
+  text-align: center;
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .forecast-list {
+    flex-direction: column;
+  }
+}
+
+.favorite-button {
+  transition: transform 0.2s;
+}
+
+.favorite-button:hover {
+  transform: scale(1.05);
+}
+
+.forecast-card:hover {
+  transform: translateY(-5px);
+  transition: transform 0.2s;
+}
