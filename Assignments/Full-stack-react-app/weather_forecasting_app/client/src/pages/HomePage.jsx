@@ -1,14 +1,14 @@
 import { useEffect, useReducer, useState } from 'react';
+import { useAuth } from '../context/AuthContext.jsx';
 import SearchBar from '../components/SearchBar.jsx';
+import FavoritesList from '../components/FavoritesList.jsx';
 import CurrentWeather from '../components/CurrentWeather.jsx';
 import Forecast from '../components/Forecast.jsx';
-import { useAuth } from '../context/AuthContext.jsx';
-import FavoritesList from '../components/FavoritesList.jsx';
 
 const initialState = {
   status: 'idle', // 'idle' | 'loading' | 'success' | 'error'
   currentWeather: null,
-  forecast: [],          // ← 新加
+  forecast: [],
   error: null,
 };
 
@@ -20,7 +20,7 @@ function weatherReducer(state, action) {
       return {
         status: 'success',
         currentWeather: action.currentWeather,
-        forecast: action.forecast,   // ← 新加
+        forecast: action.forecast,
         error: null,
       };
     case 'FETCH_ERROR':
@@ -30,7 +30,7 @@ function weatherReducer(state, action) {
   }
 }
 
-// ← 新加：预报有 40 项（每 3 小时 1 项），只留每天中午 12 点的那一项，就是 5 天
+// 预报有 40 项（每 3 小时 1 项），只留每天中午 12 点的那一项，就是 5 天
 function toDailyForecast(list) {
   return list.filter((item) => item.dt_txt.includes('12:00:00'));
 }
@@ -40,38 +40,33 @@ function HomePage() {
   const [favorites, setFavorites] = useState([]);
   const { token } = useAuth();
 
+  // 登录状态一变，就重新加载收藏列表
   useEffect(() => {
-    // 1. 如果没有 token：setFavorites([])，然后 return
     if (!token) {
-      setFavorites([])
-      return
+      setFavorites([]);
+      return;
     }
 
     async function fetchFavorites() {
-      // 2. 用 fetch 请求 '/api/favorites'，带上门禁卡（和 AuthContext 里的写法一样）
-      // 3. const data = await res.json();
-      // 4. setFavorites(data.favorites)
       const res = await fetch('/api/favorites', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+        headers: { Authorization: `Bearer ${token}` },
+      });
       const data = await res.json();
-      setFavorites(data.favorites)
+      setFavorites(data.favorites);
     }
-  
+
     fetchFavorites();
   }, [token]);
 
-
+  // 查天气：当前天气 + 预报
   async function searchCity(city) {
     dispatch({ type: 'FETCH_START' });
 
     try {
-      // 1. 当前天气
       const weatherRes = await fetch(`/api/weather?city=${city}`);
       const weatherData = await weatherRes.json();
       if (!weatherRes.ok) throw new Error(weatherData.error);
 
-      // 2. 预报 ← 新加
       const forecastRes = await fetch(`/api/forecast?city=${city}`);
       const forecastData = await forecastRes.json();
       if (!forecastRes.ok) throw new Error(forecastData.error);
@@ -79,16 +74,38 @@ function HomePage() {
       dispatch({
         type: 'FETCH_SUCCESS',
         currentWeather: weatherData,
-        forecast: toDailyForecast(forecastData.list),   // ← 新加
+        forecast: toDailyForecast(forecastData.list),
       });
     } catch (err) {
       dispatch({ type: 'FETCH_ERROR', error: err.message });
     }
   }
 
+  // 新增收藏 ← 6.6b 新加
+  async function addFavorite(city) {
+    const res = await fetch('/api/favorites', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ city }),
+    });
+    const data = await res.json();
+
+    if (res.ok) {
+      setFavorites([...favorites, data]);
+    }
+  }
+
+  // 当前城市有没有收藏过 ← 6.6b 新加
+  const currentCity = weather.currentWeather?.name;
+  const isFavorite = favorites.some((fav) => fav.city === currentCity);
+
   return (
     <main className="home-page">
       <SearchBar onSearch={searchCity} />
+
       <FavoritesList favorites={favorites} />
 
       {weather.status === 'loading' && <p className="status-message">Loading...</p>}
@@ -97,7 +114,11 @@ function HomePage() {
 
       {weather.status === 'success' && (
         <>
-          <CurrentWeather data={weather.currentWeather} />
+          <CurrentWeather
+            data={weather.currentWeather}
+            isFavorite={isFavorite}
+            onFavorite={() => addFavorite(currentCity)}
+          />
           <Forecast days={weather.forecast} />
         </>
       )}
