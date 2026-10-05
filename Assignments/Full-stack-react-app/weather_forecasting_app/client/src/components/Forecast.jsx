@@ -1,4 +1,5 @@
 import { useUnit } from '../context/UnitContext.jsx';
+import './Forecast.css';
 
 function Forecast({ days }) {
   // 1. 从 useUnit() 取出 formatTemp

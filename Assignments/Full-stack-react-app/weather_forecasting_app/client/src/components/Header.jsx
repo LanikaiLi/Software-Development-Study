@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { useUnit } from '../context/UnitContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
+import './Header.css';
 
 function Header() {
   const { unit, toggleUnit } = useUnit();  

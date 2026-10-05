@@ -1,0 +1,28 @@
+/* ===== SearchBar：输入城市 + 搜索按钮 ===== */
+
+.search-bar form {
+  display: flex;
+  gap: 12px;
+}
+
+.search-bar input {
+  flex: 1;          /* 输入框占满剩下的宽度 */
+  min-width: 0;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid var(--color-input-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-card);
+}
+
+.search-bar button {
+  min-height: 48px;
+  padding: 0 24px;
+  background-color: var(--color-primary);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.search-bar button:hover {
+  background-color: var(--color-primary-dark);
+}

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useUnit } from '../context/UnitContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
+import './CurrentWeather.css';
 
 function CurrentWeather({ data, isFavorite, onFavorite }) {
   const { formatTemp } = useUnit();

@@ -1,0 +1,66 @@
+/* ===== CurrentWeather：当前天气 ===== */
+
+.current-weather {
+  animation: fade-up 0.4s ease backwards; /* 每次显示新城市时，淡入 */
+}
+
+.city-name {
+  margin-bottom: 4px;
+  font-size: 1.5rem;
+}
+
+.temperature {
+  font-size: 3.5rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.description {
+  margin-bottom: 16px;
+  color: var(--color-text-muted);
+  text-transform: capitalize; /* 每个单词首字母大写：scattered clouds → Scattered Clouds */
+}
+
+/* ☆ Save 按钮 */
+.favorite-button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--color-accent);
+  background-color: var(--color-card);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.favorite-button:hover:not(:disabled) {
+  transform: scale(1.05);
+  background-color: var(--color-accent-soft);
+}
+
+.favorite-button.saved {
+  background-color: var(--color-accent-soft);
+}
+
+.login-hint {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background-color: var(--color-accent-soft);
+  color: #7a3e06;
+  font-size: 0.875rem;
+}
+
+/* 湿度、风速 */
+.weather-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.detail {
+  flex: 1 1 140px; /* 宽度够就并排，不够就换行 */
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-card-soft);
+  font-weight: 600;
+}

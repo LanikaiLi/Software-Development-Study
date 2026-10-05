@@ -1,0 +1,58 @@
+/* ===== Header：App 名字、°C/°F、登录 / 退出 ===== */
+
+.header {
+  display: flex;
+  flex-wrap: wrap;               /* 屏幕太窄时，自动换行 */
+  align-items: center;
+  justify-content: space-between; /* 名字在最左边，按钮在最右边 */
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 16px 24px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-card);
+  box-shadow: var(--shadow-card);
+}
+
+.header-logo {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--color-text);
+  text-decoration: none;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.unit-toggle {
+  min-width: 52px;
+  min-height: 40px;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.unit-toggle:hover {
+  background-color: var(--color-border);
+}
+
+.user-email {
+  font-size: 0.875rem;
+  color: var(--color-text-muted);
+}
+
+.logout-button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--color-border);
+  background-color: transparent;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.logout-button:hover {
+  background-color: var(--color-bg);
+}

@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import { useAuth } from '../context/AuthContext.jsx';
+import './FavoritesList.css';
 
 function FavoritesList({ favorites, onRemove, onSelect }) {
   const { token } = useAuth();

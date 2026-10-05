@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import './SearchBar.css';
 
 function SearchBar({ onSearch }) {
   // 1. 用 useState 建一个 city，初始值是 ''

@@ -1,0 +1,51 @@
+/* ===== FavoritesList：收藏的城市 ===== */
+
+.favorites-locked,
+.favorites-empty {
+  margin-bottom: 12px;
+  color: var(--color-text-muted);
+}
+
+.favorites-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none; /* 去掉列表前面的圆点 */
+}
+
+.favorite-item {
+  display: flex;
+  gap: 8px;
+}
+
+.favorite-city {
+  flex: 1;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-card-soft);
+  color: var(--color-text);
+  font-weight: 600;
+  text-align: left;
+}
+
+.favorite-city:hover {
+  border-color: var(--color-primary);
+  background-color: var(--color-primary-soft);
+}
+
+.favorite-remove {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--color-border);
+  background-color: var(--color-card);
+  color: var(--color-text-muted);
+}
+
+.favorite-remove:hover {
+  border-color: var(--color-error);
+  background-color: var(--color-error-soft);
+  color: var(--color-error);
+}
