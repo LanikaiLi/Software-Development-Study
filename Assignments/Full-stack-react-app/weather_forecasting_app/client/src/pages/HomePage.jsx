@@ -58,6 +58,12 @@ function HomePage() {
     fetchFavorites();
   }, [token]);
 
+  // 默认城市
+  useEffect(() => {
+    searchCity('Montreal');
+  }, []);
+
+
   // 查天气：当前天气 + 预报
   async function searchCity(city) {
     dispatch({ type: 'FETCH_START' });
