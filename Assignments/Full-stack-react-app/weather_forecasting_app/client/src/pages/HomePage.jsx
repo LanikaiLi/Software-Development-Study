@@ -98,6 +98,25 @@ function HomePage() {
     }
   }
 
+  // 删除收藏 ← 6.6b 新加
+  async function removeFavorite(id) {
+    console.log('removeFavorite', id);
+
+    const res = await fetch(`/api/favorites/${id}`, {
+        method: 'DELETE',
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    const data = await res.json();
+
+    console.log('res.ok', res.ok);
+
+    if (res.ok) {
+        setFavorites(favorites.filter((fav) => fav._id !== id));
+    }
+  }
+
   // 当前城市有没有收藏过 ← 6.6b 新加
   const currentCity = weather.currentWeather?.name;
   const isFavorite = favorites.some((fav) => fav.city === currentCity);
@@ -106,7 +125,7 @@ function HomePage() {
     <main className="home-page">
       <SearchBar onSearch={searchCity} />
 
-      <FavoritesList favorites={favorites} />
+      <FavoritesList favorites={favorites} onRemove={removeFavorite} onSelect={searchCity} />
 
       {weather.status === 'loading' && <p className="status-message">Loading...</p>}
 
