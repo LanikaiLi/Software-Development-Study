@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { useAuth } from '../context/AuthContext.jsx';
+import './AuthPage.css';
 
 function AuthPage() {
   const [mode, setMode] = useState('login'); // 'login' 或 'register'

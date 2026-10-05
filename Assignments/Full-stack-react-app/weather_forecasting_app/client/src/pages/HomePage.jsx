@@ -4,6 +4,7 @@ import SearchBar from '../components/SearchBar.jsx';
 import FavoritesList from '../components/FavoritesList.jsx';
 import CurrentWeather from '../components/CurrentWeather.jsx';
 import Forecast from '../components/Forecast.jsx';
+import './HomePage.css';
 
 const initialState = {
   status: 'idle', // 'idle' | 'loading' | 'success' | 'error'
