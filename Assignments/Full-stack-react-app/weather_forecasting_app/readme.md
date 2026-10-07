@@ -2,7 +2,7 @@
 
 A full-stack weather app built with **React** and **Express**. Search any city to see the current weather and a 5-day forecast, switch between °C and °F, and create an account to save your favorite cities.
 
-**Live demo:** _[add the deployed URL here]_
+**Live demo:** https://weather-forecasting-app-v9ui.onrender.com/
 
 **Demo account:** `demo@test.com` / `demo1234`
 
